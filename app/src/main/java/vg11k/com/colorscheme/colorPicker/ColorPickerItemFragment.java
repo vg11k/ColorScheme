@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +21,7 @@ import android.view.ViewGroup;
 import vg11k.com.colorscheme.ColorCircle;
 import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
-import vg11k.com.colorscheme.GenericOnListInteractionListener;
+import vg11k.com.colorscheme.IFragmentListener;
 import vg11k.com.colorscheme.R;
 import vg11k.com.colorscheme.utils.ItemClickSupport;
 
@@ -53,11 +55,15 @@ public class ColorPickerItemFragment extends Fragment {
 
     private int m_selectedProvider = 0;
 
+    private IFragmentListener m_fragmentListener;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public ColorPickerItemFragment() {
+
+
     }
 
     // TODO: Customize parameter initialization
@@ -97,6 +103,9 @@ public class ColorPickerItemFragment extends Fragment {
 
             //m_colorPickerLines = DummyContent.ITEMS;
         }
+
+
+
     }
 
     @Override
@@ -117,10 +126,41 @@ public class ColorPickerItemFragment extends Fragment {
             m_adapter = new ColorPickerItemRecyclerViewAdapter(m_colorPickerLines, mListener, m_dataProvider);
             recyclerView.setAdapter(m_adapter);
             configureOnClickRecyclerView(recyclerView);
+
+            FloatingActionButton fab = m_fragmentListener.getFab();
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    sendBackData(view);
+                }
+            });
+
         }
 
         m_view = view;
         return view;
+    }
+
+    public void sendBackData(View view) {
+
+        //only generate selected elements for now
+
+        String resTMP = "";
+
+        for(ColorPickerLine line : m_colorPickerLines) {
+
+            if(line.isSelected()) {
+                if(!resTMP.isEmpty()) {
+                    resTMP += "\n";
+                }
+                resTMP += line.getId() + " " + line.getCurrentName() + " " + line.getcolorRGB();
+            }
+
+            Snackbar.make(view, resTMP, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+
     }
 
 
@@ -196,20 +236,7 @@ public class ColorPickerItemFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener/* extends GenericOnListInteractionListener*/ {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(ColorPickerLine item);
-    }
+
 
     private void configureOnClickRecyclerView(RecyclerView recyclerView){
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_colorpickeritem)
@@ -252,6 +279,10 @@ public class ColorPickerItemFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
         //return true;
+    }
+
+    public void setFragmentListener(IFragmentListener listener) {
+        m_fragmentListener = listener;
     }
 
 

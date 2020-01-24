@@ -16,7 +16,6 @@ import java.util.List;
 
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
-import vg11k.com.colorscheme.dummy.DummyFeatureDetailFragment;
 import vg11k.com.colorscheme.menus.MenuGenerique;
 import vg11k.com.colorscheme.menus.MenusContainer;
 
@@ -88,29 +87,28 @@ public class MainListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 MenuGenerique feature = (MenuGenerique) view.getTag();
 
-
                 if (mTwoPane) {
-                    Bundle arguments = new Bundle();
+
+                    //TODO LATER
+                    /*Bundle arguments = new Bundle();
                     arguments.putString(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID, feature.getId());
                     DummyFeatureDetailFragment fragment = new DummyFeatureDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.main_menu_detail_container, fragment)
-                            .commit();
+                            .commit();*/
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, MainListDetailActivity.class);
 
-                    if(feature.getId().equals("1")) {
+
+
+                    if(ColorPickerItemFragment.FRAGMENT_TITLE.equals(feature.getContent())) {
                         intent.putExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID, feature.getId());
                     }
-                    else if(feature.getId().equals("2")) {
+                    else if(ColorConverterToolActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
                         intent.putExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID, feature.getId());
                     }
-                    else {
-                        intent.putExtra(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID, feature.getId());
-                    }
-
 
                     intent.putExtra(DataProvider.m_ID, m_provider);
 

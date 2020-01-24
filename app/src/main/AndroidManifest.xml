@@ -36,11 +36,19 @@
             android:name=".colorConverterTool.ColorConverterToolActivity"
             android:label="@string/title_activity_color_converter_tool"
             android:parentActivityName=".MainListActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="vg11k.com.colorscheme.MainListActivity" />
+        </activity>
+        <activity
+            android:name=".SchemeGenerator.SchemeGeneratorActivity"
+            android:label="@string/title_activity_scheme_generator"
+            android:parentActivityName=".MainListDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="vg11k.com.colorscheme.MainListDetailActivity" />
         </activity>
     </application>
 

@@ -29,10 +29,11 @@ import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.R;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
+import vg11k.com.colorscheme.colorPicker.OnListFragmentInteractionListener;
 import vg11k.com.colorscheme.utils.ItemClickSupport;
 
 public class ColorConverterToolActivity extends AppCompatActivity
-        implements ColorPickerItemFragment.OnListFragmentInteractionListener{
+        implements OnListFragmentInteractionListener {
 
     public static final String ACTIVITY_TITLE = "Color converter tool";
     public static final String ACTIVITY_FEATURE_ID = "color_converter_tool";

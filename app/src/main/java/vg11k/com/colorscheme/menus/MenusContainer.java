@@ -21,9 +21,10 @@ public class MenusContainer {
     private static final int NB_FEATURE = 2;
 
     static {
-        addItem(new MenuGenerique("0", MenuGenerique.GENERIC_TITLE));//new ColorSchemeListViewerFeature("0"));
-        addItem(new MenuGenerique("1", ColorPickerItemFragment.FRAGMENT_TITLE));
-        addItem(new MenuGenerique("2", ColorConverterToolActivity.ACTIVITY_TITLE));
+        //addItem(new MenuGenerique("0", MenuGenerique.GENERIC_TITLE));
+        addItem(new MenuGenerique("0", ColorPickerItemFragment.FRAGMENT_TITLE));
+        addItem(new MenuGenerique("1", ColorConverterToolActivity.ACTIVITY_TITLE));
+        addItem(new MenuGenerique("x", MenuGenerique.GENERIC_TITLE));
     }
 
     private static void addItem(MenuGenerique feature) {

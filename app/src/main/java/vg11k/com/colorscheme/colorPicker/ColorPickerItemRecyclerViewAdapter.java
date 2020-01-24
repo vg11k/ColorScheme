@@ -4,15 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import vg11k.com.colorscheme.ColorCircle;
 import vg11k.com.colorscheme.ColorViewHolder;
 import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
-import vg11k.com.colorscheme.GenericOnListInteractionListener;
-import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
-import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment.OnListFragmentInteractionListener;
 
 import vg11k.com.colorscheme.R;
 

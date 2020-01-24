@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +16,8 @@ import android.view.MenuItem;
 
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
-import vg11k.com.colorscheme.dummy.DummyFeatureDetailFragment;
+import vg11k.com.colorscheme.colorPicker.OnListFragmentInteractionListener;
+
 
 /**
  * An activity representing a single Item detail screen. This
@@ -23,10 +25,13 @@ import vg11k.com.colorscheme.dummy.DummyFeatureDetailFragment;
  * item details are presented side-by-side with a list of items
  * in a {@link MainListActivity}.
  */
+
 public class MainListDetailActivity extends AppCompatActivity
-        implements ColorPickerItemFragment.OnListFragmentInteractionListener{
+        implements IFragmentListener,
+        OnListFragmentInteractionListener {
 
 
+    private FloatingActionButton m_fab;
 
 
 
@@ -39,16 +44,15 @@ public class MainListDetailActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        m_fab = (FloatingActionButton) findViewById(R.id.fab);
+        m_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own detail action ! PLOP", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-
             }
         });
+
 
         /*Toolbar myChildToolbar =
                 (Toolbar) findViewById(R.id.detail_toolbar);
@@ -82,17 +86,10 @@ public class MainListDetailActivity extends AppCompatActivity
                     .add(R.id.main_menu_detail_container, fragment)
                     .commit();*/
 
-            if(getIntent().getStringExtra(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID) != null) {
 
-                arguments.putString(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID,
-                        getIntent().getStringExtra(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID));
-                DummyFeatureDetailFragment fragment = new DummyFeatureDetailFragment();
-                fragment.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.main_menu_detail_container, fragment)
-                        .commit();
-            }
-            else if(getIntent().getStringExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID) != null) {
+
+
+            if(getIntent().getStringExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID) != null) {
 
                 arguments.putString(ColorPickerItemFragment.FRAGMENT_FEATURE_ID,
                         getIntent().getStringExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID));
@@ -105,6 +102,7 @@ public class MainListDetailActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.main_menu_detail_container, fragment)
                         .commit();
+
             }
             else if(getIntent().getStringExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID) != null) {
 
@@ -127,6 +125,16 @@ public class MainListDetailActivity extends AppCompatActivity
         }
 
     }
+
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if(fragment instanceof ColorPickerItemFragment) {
+            ((ColorPickerItemFragment) fragment).setFragmentListener(this);
+        }
+    }
+
 
     //https://stackoverflow.com/questions/8308695/how-to-add-options-menu-to-fragment-in-android
     @Override
@@ -158,10 +166,10 @@ public class MainListDetailActivity extends AppCompatActivity
     }
 
 
-    @Override
+    /*@Override
     public void onListFragmentInteraction(ColorPickerLine item) {
 
-    }
+    }*/
 
 
 
@@ -171,5 +179,14 @@ public class MainListDetailActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public FloatingActionButton getFab() {
+        return m_fab;
+    }
 
+
+    @Override
+    public void onListFragmentInteraction(ColorPickerLine item) {
+
+    }
 }
