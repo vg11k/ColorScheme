@@ -215,7 +215,6 @@ public class ColorPickerItemFragment extends Fragment {
         });
         builder.show();
 
-
     }
 
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
 
@@ -24,6 +25,8 @@ public class MenusContainer {
         //addItem(new MenuGenerique("0", MenuGenerique.GENERIC_TITLE));
         addItem(new MenuGenerique("0", ColorPickerItemFragment.FRAGMENT_TITLE));
         addItem(new MenuGenerique("1", ColorConverterToolActivity.ACTIVITY_TITLE));
+        addItem(new MenuGenerique("2", SchemeGeneratorActivity.ACTIVITY_TITLE));
+
         addItem(new MenuGenerique("x", MenuGenerique.GENERIC_TITLE));
     }
 

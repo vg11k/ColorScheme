@@ -1,8 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity"
-    android:label="BOUH">
+    tools:context="vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity">
 
     <item
         android:id="@+id/action_switch_provider"

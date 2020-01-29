@@ -42,7 +42,7 @@
                 android:value="vg11k.com.colorscheme.MainListActivity" />
         </activity>
         <activity
-            android:name=".SchemeGenerator.SchemeGeneratorActivity"
+            android:name=".schemeGenerator.SchemeGeneratorActivity"
             android:label="@string/title_activity_scheme_generator"
             android:parentActivityName=".MainListDetailActivity"
             android:theme="@style/AppTheme.NoActionBar">

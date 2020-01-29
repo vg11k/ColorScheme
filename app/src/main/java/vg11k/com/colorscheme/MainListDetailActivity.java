@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
 import vg11k.com.colorscheme.colorPicker.OnListFragmentInteractionListener;
+import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
 
 
 /**
@@ -88,6 +89,7 @@ public class MainListDetailActivity extends AppCompatActivity
 
 
 
+            //TODO songer a un moyen de factoriser tout ca
 
             if(getIntent().getStringExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID) != null) {
 
@@ -121,7 +123,21 @@ public class MainListDetailActivity extends AppCompatActivity
                 finish();
 
             }
+            else if(getIntent().getStringExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID) != null) {
 
+                arguments.putString(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID,
+                        getIntent().getStringExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID));
+
+                arguments.putParcelable(DataProvider.m_ID,
+                        getIntent().getParcelableExtra(DataProvider.m_ID));
+
+                Intent intent = new Intent(MainListDetailActivity.this, SchemeGeneratorActivity.class);
+
+                intent.putExtras(arguments);
+                startActivity(intent);
+                finish();
+
+            }
         }
 
     }
