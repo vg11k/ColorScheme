@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scheme_generator_content"
+    android:name="vg11k.com.colorscheme.schemeGenerator.shemeGeneratorContent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutManager="LinearLayoutManager"
+    tools:context="vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity"
+    tools:listitem="@layout/item_list_content">
+
+
+
+    </android.support.v7.widget.RecyclerView>
+
+<!--<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,4 +25,4 @@
     tools:context="vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity"
     tools:showIn="@layout/activity_scheme_generator">
 
-</android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.NestedScrollView>-->
