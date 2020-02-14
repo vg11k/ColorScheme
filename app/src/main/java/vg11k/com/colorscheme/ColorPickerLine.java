@@ -13,6 +13,7 @@ public class ColorPickerLine {
     private final String m_colorRGB;
     private final ArrayList<String> m_names;
     private String m_currentName;
+    private int m_providerId;
     private final int m_id;
     private boolean m_selected;
     private int m_visible;
@@ -34,6 +35,8 @@ public class ColorPickerLine {
         else {
             m_visible = View.VISIBLE;
         }
+
+        m_providerId = 0;
     }
 
     public String getCurrentName() {return m_currentName;}
@@ -45,8 +48,11 @@ public class ColorPickerLine {
         }
         else {
             m_visible = View.VISIBLE;
+            m_providerId = index;
         }
     }
+
+    public int getProviderIndex() { return m_providerId;}
 
     public int getId(){ return m_id;}
 

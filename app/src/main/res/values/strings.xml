@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Color Scheme</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="generator_name">Scheme Generator</string>
+    <string name="save_scheme">Save Scheme</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -10,6 +12,11 @@
     <string name="switch_provider">Switch provider</string>
     <string name="title_activity_color_converter_tool">ColorConverterToolActivity</string>
     <string name="cool_pic">cool pic !</string>
+    <string name="mix_color_icon_description">mix color icon</string>
+    <string name="add_content">add content</string>
+    <string name="drag_icon">drag icon</string>
+    <string name="collapse_icon">collapse icon</string>
+    <string name="expand_icon">expand icon</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

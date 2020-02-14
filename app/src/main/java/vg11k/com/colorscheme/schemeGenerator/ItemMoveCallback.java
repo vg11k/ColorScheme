@@ -1,17 +1,11 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.View;
 
 import java.util.List;
-
-import vg11k.com.colorscheme.R;
-import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 
 /**
  * Created by Julien on 29/01/2020.
@@ -39,18 +33,27 @@ class ItemMoveCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        return makeMovementFlags(dragFlags, 0);
+        int swipeFlags = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+        return makeMovementFlags(dragFlags, swipeFlags);
     }
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
-        mAdapter.onRowMoved(viewHolder.getAdapterPosition(), viewHolder1.getAdapterPosition());
-        return true;
+
+        if(viewHolder1 instanceof AbstractDraggableViewHolder) {
+            if(((AbstractDraggableViewHolder) viewHolder1).getModel().isDraggable()) {
+                mAdapter.onRowMoved(viewHolder.getAdapterPosition(), viewHolder1.getAdapterPosition());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        //TODO later to remove a content
+        if(viewHolder instanceof AbstractDraggableViewHolder) {
+            mAdapter.onRowSwiped(viewHolder.getAdapterPosition());
+        }
     }
 
     @Override
@@ -59,11 +62,16 @@ class ItemMoveCallback extends ItemTouchHelper.Callback {
 
 
         if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-            if (viewHolder instanceof SchemeGeneratorActivityAdapter.DemoViewHolder) {
-                SchemeGeneratorActivityAdapter.DemoViewHolder myViewHolder=
-                        (SchemeGeneratorActivityAdapter.DemoViewHolder) viewHolder;
+            if (viewHolder instanceof AbstractDraggableViewHolder) {
+                AbstractDraggableViewHolder myViewHolder=
+                        (AbstractDraggableViewHolder) viewHolder;
                 mAdapter.onRowSelected(myViewHolder);
             }
+            /*else if(viewHolder instanceof HeaderLineViewHolder) {
+                HeaderLineViewHolder myViewHolder=
+                        (HeaderLineViewHolder) viewHolder;
+                mAdapter.onRowSelected(myViewHolder);
+            }*/
 
         }
 
@@ -74,18 +82,18 @@ class ItemMoveCallback extends ItemTouchHelper.Callback {
                           RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
 
+        if (viewHolder instanceof AbstractDraggableViewHolder) {
 
-
-        if (viewHolder instanceof SchemeGeneratorActivityAdapter.DemoViewHolder) {
-
-
-
-
-            SchemeGeneratorActivityAdapter.DemoViewHolder myViewHolder=
-                    (SchemeGeneratorActivityAdapter.DemoViewHolder) viewHolder;
+            AbstractDraggableViewHolder myViewHolder=
+                    (AbstractDraggableViewHolder) viewHolder;
             mAdapter.onRowClear(myViewHolder);
 
         }
+        /*else if(viewHolder instanceof HeaderLineViewHolder) {
+            HeaderLineViewHolder myViewHolder=
+                    (HeaderLineViewHolder) viewHolder;
+            mAdapter.onRowClear(myViewHolder);
+        }*/
 
 
     }
@@ -99,19 +107,7 @@ class ItemMoveCallback extends ItemTouchHelper.Callback {
                   int x,
                   int y) {
 
-
         super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
-    }
-
-    public interface ItemTouchHelperContract {
-
-        void onRowMoved(int fromPosition, int toPosition);
-        void onRowSelected(SchemeGeneratorActivityAdapter.DemoViewHolder myViewHolder);
-        void onRowClear(SchemeGeneratorActivityAdapter.DemoViewHolder myViewHolder);
-        void onDropFocus(@NonNull RecyclerView.ViewHolder selectedView,
-                         @NonNull List<RecyclerView.ViewHolder> dropTargets,
-                         int curx, int cury);
-
     }
 
     @Override public RecyclerView.ViewHolder chooseDropTarget(@NonNull RecyclerView.ViewHolder selectedView,
@@ -119,7 +115,36 @@ class ItemMoveCallback extends ItemTouchHelper.Callback {
                                                               int curx, int cury) {
         //notify the adapter this drag hover another holder. It's a potential node-drop.
         mAdapter.onDropFocus(selectedView, dropTargets, curx, cury);
-
         return super.chooseDropTarget(selectedView, dropTargets, curx, cury);
     }
+
+    @Override
+    public void onChildDraw(Canvas c,
+                            RecyclerView recyclerView,
+                            RecyclerView.ViewHolder viewHolder,
+                            float dX,
+                            float dY,
+                            int actionState,
+                            boolean isCurrentlyActive) {
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            float alpha = 1 - (Math.abs(dX) / recyclerView.getWidth());
+            viewHolder.itemView.setAlpha(alpha);
+        }
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+    }
+
+    public interface ItemTouchHelperContract {
+
+        void onRowMoved(int fromPosition, int toPosition);
+        void onRowSelected(AbstractViewHolder myViewHolder);
+        void onRowClear(AbstractViewHolder myViewHolder);
+        void onDropFocus(@NonNull RecyclerView.ViewHolder selectedView,
+                         @NonNull List<RecyclerView.ViewHolder> dropTargets,
+                         int curx, int cury);
+
+        void onRowSwiped(int position);
+
+    }
+
+
 }

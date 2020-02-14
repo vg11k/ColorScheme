@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     package="vg11k.com.colorscheme">
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:appComponentFactory="androidx"
@@ -41,14 +41,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="vg11k.com.colorscheme.MainListActivity" />
         </activity>
-        <activity
-            android:name=".schemeGenerator.SchemeGeneratorActivity"
-            android:label="@string/title_activity_scheme_generator"
-            android:parentActivityName=".MainListDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".schemeGenerator.SchemeGeneratorActivity"
+            android:label="@string/generator_name"
+            android:parentActivityName=".MainListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="vg11k.com.colorscheme.MainListDetailActivity" />
+                android:value="vg11k.com.colorscheme.MainListActivity" />
         </activity>
     </application>
 

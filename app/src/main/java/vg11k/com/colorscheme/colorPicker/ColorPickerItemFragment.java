@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,7 +33,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnColorPickerItemFragmentInteractionListener}
  * interface.
  */
 public class ColorPickerItemFragment extends Fragment {
@@ -41,7 +42,7 @@ public class ColorPickerItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnColorPickerItemFragmentInteractionListener mListener;
 
     public static final String FRAGMENT_FEATURE_ID = "color_picker_item_fragment";
     public static final String FRAGMENT_TITLE = "Color picker";
@@ -128,10 +129,10 @@ public class ColorPickerItemFragment extends Fragment {
             configureOnClickRecyclerView(recyclerView);
 
             FloatingActionButton fab = m_fragmentListener.getFab();
+            fab.show();
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     sendBackData(view);
                 }
             });
@@ -146,21 +147,23 @@ public class ColorPickerItemFragment extends Fragment {
 
         //only generate selected elements for now
 
-        String resTMP = "";
+        ArrayList<ColorPickerLine> selectedLines = new ArrayList<ColorPickerLine>();
 
         for(ColorPickerLine line : m_colorPickerLines) {
 
             if(line.isSelected()) {
-                if(!resTMP.isEmpty()) {
-                    resTMP += "\n";
-                }
-                resTMP += line.getId() + " " + line.getCurrentName() + " " + line.getcolorRGB();
+                selectedLines.add(line);
             }
-
-            Snackbar.make(view, resTMP, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
         }
 
+        mListener.onColorPickerListFragmentInteraction(selectedLines);
+
+        /*FragmentManager fm = getFragmentManager();
+        //if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStackImmediate();
+            getActivity().finish();
+        //}
+        */
     }
 
 
@@ -209,6 +212,7 @@ public class ColorPickerItemFragment extends Fragment {
 
                 m_selectedProvider = which;
                 m_adapter.setSelectedProvider(m_selectedProvider);
+                //m_adapter.notifyDataSetChanged();
                 //Snackbar.make(m_view, "Select le fournisseur " + colors[which], Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
             }
@@ -221,11 +225,11 @@ public class ColorPickerItemFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnColorPickerItemFragmentInteractionListener) {
+            mListener = (OnColorPickerItemFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnColorPickerItemFragmentInteractionListener");
         }
     }
 
@@ -243,8 +247,6 @@ public class ColorPickerItemFragment extends Fragment {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         System.out.println("Element touche : " + position);
-
-
 
                         ColorPickerLine colorPicker = m_colorPickerLines.get(position);
                         System.out.println(m_colorPickerLines.get(position).getColorName());
@@ -275,6 +277,7 @@ public class ColorPickerItemFragment extends Fragment {
         //fav.setIcon("@android:drawable/btn_star");
 
         menu.findItem(R.id.action_switch_provider).setVisible(true);
+        menu.findItem(R.id.action_save_scheme).setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
 
         //return true;
@@ -283,6 +286,5 @@ public class ColorPickerItemFragment extends Fragment {
     public void setFragmentListener(IFragmentListener listener) {
         m_fragmentListener = listener;
     }
-
 
 }

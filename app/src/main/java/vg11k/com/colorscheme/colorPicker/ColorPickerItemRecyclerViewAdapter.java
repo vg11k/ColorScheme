@@ -16,20 +16,20 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ColorPickerLine} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnColorPickerItemFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<ColorViewHolder> {
 
     private final List<ColorPickerLine> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnColorPickerItemFragmentInteractionListener mListener;
     private final DataProvider mdataProvider;
     private ViewGroup mParent;
     private int mSelectedProvider;
     private ArrayList<ColorViewHolder> m_holders;
 
 
-    public ColorPickerItemRecyclerViewAdapter(List<ColorPickerLine> items, OnListFragmentInteractionListener listener, DataProvider dataProvider) {
+    public ColorPickerItemRecyclerViewAdapter(List<ColorPickerLine> items, OnColorPickerItemFragmentInteractionListener listener, DataProvider dataProvider) {
         mValues = items;
         mListener = listener;
         mdataProvider = dataProvider;
@@ -55,18 +55,58 @@ public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<Col
     public void setSelectedProvider(int selectedIndex) {
         mSelectedProvider = selectedIndex;
         updateAllColorPickerLineView();
+
     }
 
     public void updateAllColorPickerLineView() {
-        for(int i = 0; i < m_holders.size(); i++) {
+        /*for(int i = 0; i < m_holders.size(); i++) {
             ColorViewHolder holder = m_holders.get(i);
-            if(holder.mItem.getColorName(mSelectedProvider).isEmpty()) {
-                holder.setVisibility(View.GONE);
+
+            if(holder.mItem.getId() != i) {
+                m_holders.remove(i);
+                notifyItemRemoved(i);
+                notifyItemRangeChanged(i, 1);
+                i--;
+                System.out.println("remove " + i);
             }
             else {
-                holder.setVisibility(View.VISIBLE);
-                holder.mContentView.setText(holder.mItem.getColorName(mSelectedProvider));
-                //holder.mContentView.setText(mdataProvider.getLine(i+1)[mSelectedProvider + 1]);
+                if (holder.mItem.getColorName(mSelectedProvider).isEmpty()) {
+                    holder.mItem.setVisible(View.GONE);
+                    //holder.setVisibility(View.GONE);
+                } else {
+                    //why the fuck the activity does not update itself when the model change ?
+                    holder.mItem.setCurrentName(mSelectedProvider);
+                    //holder.mContentView.setText(holder.mItem.getCurrentName());
+                    //holder.setVisibility(View.VISIBLE);
+                    //holder.mContentView.setText(mdataProvider.getLine(i+1)[mSelectedProvider + 1]);
+                }
+            }
+        }*/
+
+        for(ColorPickerLine line : mValues) {
+            if (line.getColorName(mSelectedProvider).isEmpty()) {
+                line.setVisible(View.GONE);
+            }
+            else {
+                line.setCurrentName(mSelectedProvider);
+            }
+        }
+
+        for(int i = 0; i < m_holders.size(); i++) {
+            ColorViewHolder holder = m_holders.get(i);
+
+            if(holder.mItem.getId() != i) {
+                m_holders.remove(i);
+                notifyItemRemoved(i);
+                notifyItemRangeChanged(i, 1);
+                i--;
+                System.out.println("remove " + i);
+            }
+            else {
+
+                holder.mContentView.setText(holder.mItem.getCurrentName());
+                holder.setVisibility(holder.mItem.getVisible());
+
             }
         }
     }
@@ -74,30 +114,12 @@ public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<Col
     @Override
     public void onBindViewHolder(final ColorViewHolder holder, int position) {
 
-        ColorPickerLine itemToDisplay = holder.mItem;
-
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
         holder.mContentView.setText(mValues.get(position).getColorName());
         holder.mColorCircle.setRGBColor(mValues.get(position).getcolorRGB());
+        holder.setVisibility(mValues.get(position).getVisible());
 
-        if(holder.mItem.getColorName(mSelectedProvider).isEmpty()) {
-            holder.setVisibility(View.GONE);
-        }
-        else {
-            holder.setVisibility(View.VISIBLE);
-        }
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
     }
 
     @Override

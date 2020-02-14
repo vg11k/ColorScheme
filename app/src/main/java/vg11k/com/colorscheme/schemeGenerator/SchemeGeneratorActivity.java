@@ -1,118 +1,314 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.MotionEvent;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
+import vg11k.com.colorscheme.MainListActivity;
 import vg11k.com.colorscheme.R;
+import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
+import vg11k.com.colorscheme.colorPicker.OnColorPickerItemFragmentInteractionListener;
 
-public class SchemeGeneratorActivity extends AppCompatActivity implements StartDragListener {
-
-    public static final String ACTIVITY_TITLE = "Scheme generator";
-    public static final String ACTIVITY_FEATURE_ID = "scheme_generator_tool";
-
-    private DataProvider m_dataProvider;
-    private View m_view;
-
-    private SchemeGeneratorActivityAdapter m_adapter;
+public class SchemeGeneratorActivity extends AppCompatActivity
+        implements SchemeGeneratorFragment.OnSchemeGeneratorFragmentInteractionListener,
+        OnColorPickerItemFragmentInteractionListener {
 
 
-    private int mColumnCount = 1;
+    public static final String ACTIVITY_TITLE = "Scheme generator2";
+    public static final String ACTIVITY_FEATURE_ID = "scheme_generator_tool2";
 
-    ItemTouchHelper mTouchHelper;
+    private FloatingActionButton m_fab;
 
-    private final List<String> mValues = new ArrayList<String>();
+    private SchemeGeneratorFragment m_generatorFragment;
+    private ColorPickerItemFragment m_pickerFragment;
+
+    boolean m_isPickerFragmentDisplayed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_scheme_generator);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        toolbar.setTitle("Scheme Generator");
-
-        Bundle b = getIntent().getExtras();
-        if (b != null) {
-
-            m_dataProvider = b.getParcelable(DataProvider.m_ID);
-
-            /*int nbLines = m_dataProvider.getLinesCount() - 1;//we don't count the header
-            for (int i = 0; i < nbLines; i++) {
-                String[] line = m_dataProvider.getLine(i + 1);
-            }*/
-        }
+        //getSupportActionBar().hide();
 
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        m_fab = (FloatingActionButton) findViewById(R.id.fab);
+        m_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Replace with your own detail action ! PLOP", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });*/
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        });
 
-        m_view = findViewById(R.id.scheme_generator_content);
-        Context context = m_view.getContext();
-
-
-        mValues.add("Dummy value 1");
-        mValues.add("Dummy value 2");
-        mValues.add("Dummy value 3");
-
-
-
-        // Set the adapter
-        if (m_view instanceof RecyclerView) {
-
-            RecyclerView.LayoutManager manager = null;
-            final RecyclerView recyclerView = (RecyclerView) m_view;
-
-            if (mColumnCount <= 1) {
-                manager = new LinearLayoutManager(context);
-                recyclerView.setLayoutManager(manager);
-            } else {
-                manager = new GridLayoutManager(context, mColumnCount);
-                recyclerView.setLayoutManager(manager);
-                throw new IllegalStateException("Should be only one column");
-
-            }
-
-            m_adapter = new SchemeGeneratorActivityAdapter(m_dataProvider, context, m_view, mValues, this);
-            ItemTouchHelper.Callback callback = new ItemMoveCallback(m_adapter);
-            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-            touchHelper.attachToRecyclerView(recyclerView);
-            mTouchHelper = touchHelper;
-
-            recyclerView.setAdapter(m_adapter);
-            
-            configureOnClickRecyclerView(recyclerView);
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
 
-    }
+        if (savedInstanceState == null) {
+            Bundle arguments = new Bundle();
 
-    private void configureOnClickRecyclerView(RecyclerView recyclerView) {
+            //if(getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID) != null) {
+
+            arguments.putString(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID,
+                    getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID));
+
+            m_isPickerFragmentDisplayed = false;
+
+            arguments.putParcelable(DataProvider.m_ID,
+                    getIntent().getParcelableExtra(DataProvider.m_ID));
+
+            m_generatorFragment = new SchemeGeneratorFragment();
+            m_generatorFragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_menu_detail_container, m_generatorFragment, "generator")
+                    .addToBackStack(null)
+                    .commit();
+            //}
+        }
+        else {
+            //RESTORE THE FRAGMENTS INSTANCE
+
+
+            if (!m_generatorFragment.isInLayout()) {
+
+                m_isPickerFragmentDisplayed = false;
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, m_generatorFragment, "generator")
+                        .commit();
+            }
+
+        }
     }
 
     @Override
-    public void requestDrag(RecyclerView.ViewHolder viewHolder) {
-        mTouchHelper.startDrag(viewHolder);
+    public void onSchemeGeneratorFragmentInteraction(Uri uri) {
+
+        Thread.yield();
     }
+
+    @Override
+    public void requestColorPickerFragment() {
+        // Create fragment and give it an argument specifying the article it should show
+        ColorPickerItemFragment newFragment = new ColorPickerItemFragment();
+        Bundle args = new Bundle();
+        //args.putInt(ColorPickerItemFragment.ARG_POSITION, position);
+
+
+        args.putParcelable(DataProvider.m_ID,
+                getIntent().getParcelableExtra(DataProvider.m_ID));
+        newFragment.setArguments(args);
+
+        m_isPickerFragmentDisplayed = true;
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_menu_detail_container, newFragment, "picker");
+        transaction.addToBackStack(null);
+
+// Commit the transaction
+        transaction.commit();
+
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if(fragment instanceof SchemeGeneratorFragment) {
+            ((SchemeGeneratorFragment) fragment).setFragmentListener(this);
+        }
+        else if(fragment instanceof ColorPickerItemFragment) {
+            ((ColorPickerItemFragment) fragment).setFragmentListener(this);
+        }
+    }
+
+    //https://stackoverflow.com/questions/8308695/how-to-add-options-menu-to-fragment-in-android
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch(id) {
+            case android.R.id.home :
+
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                //
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                //
+                NavUtils.navigateUpTo(this, new Intent(this, MainListActivity.class));
+                return true;
+
+            case R.id.action_save_scheme :
+
+
+                askToSaveData();
+                return true;
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_scheme_generator, menu);
+
+        menu.findItem(R.id.action_switch_provider).setVisible(false);
+        menu.findItem(R.id.action_save_scheme).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public FloatingActionButton getFab() {
+        return m_fab;
+    }
+
+    @Override
+    public void onColorPickerListFragmentInteraction(List<ColorPickerLine> items) {
+
+        SchemeGeneratorFragment generatorFrag =
+                (SchemeGeneratorFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.scheme_generator_fragment_content);
+        if(generatorFrag != null) {
+            //this is a tablet with two panes
+            //generatorFrag.updateView(items);
+        }
+        else {
+            //one pane layout, we swap between fragments
+
+            ArrayList<Integer> indexes = new ArrayList<Integer>();
+            ArrayList<Integer> providerIndexes = new ArrayList<Integer>();
+
+            for(ColorPickerLine color : items) {
+                indexes.add(color.getId());
+                providerIndexes.add(color.getProviderIndex());
+            }
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment, "generator");
+
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+            m_isPickerFragmentDisplayed = false;
+
+            m_generatorFragment.addColors(indexes, providerIndexes);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's instance
+        getSupportFragmentManager().putFragment(outState, "generator", m_generatorFragment);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        //super.onBackPressed();
+
+
+        //NavUtils.navigateUpTo(this, new Intent(this, MainListActivity.class));
+        //NavUtils.navigateUpFromSameTask(this);
+
+        //screw the fragmentManager stack navigation, i can't make it work properly
+        if(m_isPickerFragmentDisplayed){
+            getFragmentManager().popBackStack();
+            m_isPickerFragmentDisplayed = false;
+
+            m_pickerFragment = null;
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment, "generator");
+
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+        }
+        else
+            NavUtils.navigateUpFromSameTask(this);//get back to parent activity
+
+    }
+
+    public void askToSaveData() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(m_generatorFragment.getContext());
+        builder.setTitle("Saisir nom du Schema");
+
+        final EditText input = new EditText(m_generatorFragment.getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String inputText = input.getText().toString();
+
+                if(!inputText.isEmpty()) {
+                        Snackbar.make(m_generatorFragment.getView(), "Sauvegarde reclamee", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+
+                        //TODO generate json & copy image bitmap
+                }
+                else {
+                    Snackbar.make(m_generatorFragment.getView(), "Sauvegarde annulee", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Snackbar.make(m_generatorFragment.getView(), "Sauvegarde annulee", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        builder.show();
+    }
+
 }

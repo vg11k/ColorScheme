@@ -8,4 +8,6 @@ import android.support.v7.widget.RecyclerView;
 
 interface StartDragListener {
     void requestDrag(RecyclerView.ViewHolder viewHolder);
+    void requestSwipe(RecyclerView.ViewHolder viewHolder);
+    void requestMerge(AbstractDraggableViewHolder movedHolder, AbstractDraggableViewHolder targetHolder);
 }

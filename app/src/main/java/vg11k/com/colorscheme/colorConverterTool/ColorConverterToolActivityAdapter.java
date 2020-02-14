@@ -73,14 +73,14 @@ public class ColorConverterToolActivityAdapter extends RecyclerView.Adapter<Colo
         for(int i = 0; i < m_holders.size(); i++) {
             ColorViewHolder holder = m_holders.get(i);
 
-            if(holder.mItem.getId() != i) {
+            /*if(holder.mItem.getId() != i) {
                 m_holders.remove(i);
                 notifyItemRemoved(i);
                 notifyItemRangeChanged(i, 1);
                 i--;
                 System.out.println("remove " + i);
             }
-            else {
+            else {*/
 
 
                 if (holder.mItem.getColorName(mSelectedProvider).isEmpty()) {
@@ -91,7 +91,7 @@ public class ColorConverterToolActivityAdapter extends RecyclerView.Adapter<Colo
                     //holder.mContentView.setText(holder.mItem.getColorName(mSelectedProvider));
                     holder.mItem.setCurrentName(mSelectedProvider);
                 }
-            }
+            //}
         }
     }
 

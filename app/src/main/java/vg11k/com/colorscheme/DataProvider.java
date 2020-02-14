@@ -49,6 +49,14 @@ public class DataProvider implements Parcelable {
         return m_colorArray.get(i);
     }
 
+    public final String getColorRGB(int i) { return m_colorArray.get(i)[0];}
+
+    public final String getColorProvider(int i) { return m_colorArray.get(0)[i];}
+
+    public final String getColorNameForProvider(int colorIndex, int providerIndex) {
+        return m_colorArray.get(colorIndex)[providerIndex];
+    }
+
     public DataProvider(Parcel parcel) {
         parcel.readList(m_colorArray, String[].class.getClassLoader());
     }

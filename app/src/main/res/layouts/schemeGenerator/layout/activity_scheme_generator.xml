@@ -1,71 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:id="@+id/scheme_generator"
+    android:id="@+id/scheme_generator2"
     tools:context="vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <!--<android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+        <!--app:layout_collapseMode="pin"-->
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <FrameLayout
-        android:id="@+id/shemeGeneratorFrameLayout"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/main_menu_detail_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="#ffffff"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/main_menu_detail_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ffffff"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/cool_pic"
-                    android:src="@drawable/cool_pic"
-                    />
-
-                <include layout="@layout/content_scheme_generator" />
-
-            </LinearLayout>
-        </ScrollView>
-
-
-</FrameLayout>
-   <!-- <android.support.design.widget.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/app_bar"
+        android:layout_gravity="center_vertical|start"
+        android:layout_margin="@dimen/fab_margin"
+        app:elevation="0dp"
+        app:layout_anchor="@+id/main_menu_detail_container"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email" />-->
+        app:srcCompat="@android:drawable/stat_notify_more" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,6 +1,7 @@
 package vg11k.com.colorscheme;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,10 +15,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import java.util.List;
+
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
-import vg11k.com.colorscheme.colorPicker.OnListFragmentInteractionListener;
+import vg11k.com.colorscheme.colorPicker.OnColorPickerItemFragmentInteractionListener;
 import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
+import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorFragment;
 
 
 /**
@@ -29,7 +33,8 @@ import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
 
 public class MainListDetailActivity extends AppCompatActivity
         implements IFragmentListener,
-        OnListFragmentInteractionListener {
+        OnColorPickerItemFragmentInteractionListener,
+        SchemeGeneratorFragment.OnSchemeGeneratorFragmentInteractionListener {
 
 
     private FloatingActionButton m_fab;
@@ -89,8 +94,6 @@ public class MainListDetailActivity extends AppCompatActivity
 
 
 
-            //TODO songer a un moyen de factoriser tout ca
-
             if(getIntent().getStringExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID) != null) {
 
                 arguments.putString(ColorPickerItemFragment.FRAGMENT_FEATURE_ID,
@@ -123,6 +126,21 @@ public class MainListDetailActivity extends AppCompatActivity
                 finish();
 
             }
+            /*else if(getIntent().getStringExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID) != null) {
+
+                arguments.putString(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID,
+                        getIntent().getStringExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID));
+
+                arguments.putParcelable(DataProvider.m_ID,
+                        getIntent().getParcelableExtra(DataProvider.m_ID));
+
+                Intent intent = new Intent(MainListDetailActivity.this, SchemeGeneratorActivity.class);
+
+                intent.putExtras(arguments);
+                startActivity(intent);
+                finish();
+
+            }*/
             else if(getIntent().getStringExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID) != null) {
 
                 arguments.putString(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID,
@@ -138,8 +156,21 @@ public class MainListDetailActivity extends AppCompatActivity
                 finish();
 
             }
-        }
+            /*else if(getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID) != null) {
 
+                arguments.putString(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID,
+                        getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID));
+
+                arguments.putParcelable(DataProvider.m_ID,
+                        getIntent().getParcelableExtra(DataProvider.m_ID));
+
+                SchemeGeneratorFragment fragment = new SchemeGeneratorFragment();
+                fragment.setArguments(arguments);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.main_menu_detail_container, fragment)
+                        .commit();
+            }*/
+        }
     }
 
 
@@ -183,7 +214,7 @@ public class MainListDetailActivity extends AppCompatActivity
 
 
     /*@Override
-    public void onListFragmentInteraction(ColorPickerLine item) {
+    public void onColorPickerListFragmentInteraction(ColorPickerLine item) {
 
     }*/
 
@@ -202,7 +233,17 @@ public class MainListDetailActivity extends AppCompatActivity
 
 
     @Override
-    public void onListFragmentInteraction(ColorPickerLine item) {
+    public void onColorPickerListFragmentInteraction(List<ColorPickerLine> items) {
+        //this is a demo. Nothing to do.
+    }
+
+    @Override
+    public void onSchemeGeneratorFragmentInteraction(Uri uri) {
+        //nothing for now
+    }
+
+    @Override
+    public void requestColorPickerFragment() {
 
     }
 }

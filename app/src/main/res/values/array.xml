@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="addElementsArray">
+        <item>Ajouter une couleur</item>
+        <item>Ajouter une section</item>
+        <item>Annuler</item>
+    </string-array>
+    <string-array name="selectKindOfProcessArray">
+        <item>Ajouter une couleur</item>
+        <item>Ajouter une section</item>
+        <item>Annuler</item>
+
+
+
+        LAYER(0, "Layer"),
+        AERO(1, "Aero"),
+        BRUSH(2, "Brush"),
+        LAVIS(3, "Lavis"),
+        GLACIS(4, "Glacis"),
+        DETAIL(5, "Detail");
+    </string-array>
+</resources>

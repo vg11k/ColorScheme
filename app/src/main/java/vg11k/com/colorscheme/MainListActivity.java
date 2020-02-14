@@ -110,6 +110,12 @@ public class MainListActivity extends AppCompatActivity {
                     else if(ColorConverterToolActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
                         intent.putExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID, feature.getId());
                     }
+                    /*else if(SchemeGeneratorActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
+                        intent.putExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID, feature.getId());
+                    }
+                    else if(SchemeGeneratorFragment.FRAGMENT_TITLE.equals(feature.getContent())) {
+                        intent.putExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID, feature.getId());
+                    }*/
                     else if(SchemeGeneratorActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
                         intent.putExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID, feature.getId());
                     }

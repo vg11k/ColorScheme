@@ -1,5 +1,7 @@
 package vg11k.com.colorscheme.colorPicker;
 
+import java.util.List;
+
 import vg11k.com.colorscheme.ColorPickerLine;
 
 /**
@@ -17,7 +19,7 @@ import vg11k.com.colorscheme.ColorPickerLine;
  * >Communicating with Other Fragments</a> for more information.
  */
 
-public interface OnListFragmentInteractionListener {
+public interface OnColorPickerItemFragmentInteractionListener {
     // TODO: Update argument type and name
-    void onListFragmentInteraction(ColorPickerLine item);
+    void onColorPickerListFragmentInteraction(List<ColorPickerLine> items);
 }
