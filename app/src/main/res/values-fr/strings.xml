@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Schéma de Couleurs</string>
+    <string name="title_item_detail">Item Détail</string>
+    <string name="generator_name">Générateur de Schéma</string>
+    <string name="save_scheme">Sauvegarder Schéma</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="color_blank_name">Couleur indéfinie</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_favorite">Favoris</string>
+    <string name="switch_provider">Changer fournisseur</string>
+    <string name="title_activity_color_converter_tool">Outil de Conversion de couleur</string>
+    <string name="cool_pic">cool pic !</string>
+    <string name="mix_color_icon_description">mix color icon</string>
+    <string name="add_content">ajouter contenu</string>
+    <string name="drag_icon">drag icon</string>
+    <string name="collapse_icon">collapse icon</string>
+    <string name="expand_icon">expand icon</string>
+    <string name="local_schemes">Schémas locaux</string>
+    <string name="title_activity_scheme_generator">Générateur de Schéma</string>
+    <string name="new_scheme">Nouveau Schéma</string>
+    <string name="base">Base</string>
+    <string name="mix">Mélange</string>
+
+    <string name="add_element_to_scheme">Ajouter un élément au Schéma</string>
+    <string name="add_color">Ajouter une couleur</string>
+    <string name="add_section">Ajouter une section</string>
+    <string name="cancel">Annuler</string>
+    <string name="set_section_name">Saisir le nom de la section</string>
+
+    <string name="select_process_to_apply">Choisir un traitement a appliquer</string>
+    <string name="layer">Couche</string>
+    <string name="aero">Aéro</string>
+    <string name="brush">Brossage</string>
+    <string name="lavis">Lavis</string>
+    <string name="glacis">Glacis</string>
+    <string name="detail">Détail</string>
+
+    <string name="keep">Garder</string>
+    <string name="select_another_provider_for">Choisir un autre fournisseur...</string>
+    <string name="and">et</string>
+
+    <string name="enter_scheme_name">Saisir nom du schéma :</string>
+    <string name="save_done">Sauvegarde effectuée.</string>
+    <string name="save_canceled">Sauvegarde annulée.</string>
+
+    <string name="delete_selected_scheme">Supprimer schéma selectionné ?</string>
+
+</resources>

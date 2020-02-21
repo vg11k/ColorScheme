@@ -20,6 +20,7 @@ import java.util.List;
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
 import vg11k.com.colorscheme.colorPicker.OnColorPickerItemFragmentInteractionListener;
+import vg11k.com.colorscheme.grid.GridSchemeActivity;
 import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
 import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorFragment;
 
@@ -154,7 +155,21 @@ public class MainListDetailActivity extends AppCompatActivity
                 intent.putExtras(arguments);
                 startActivity(intent);
                 finish();
+            }
+            else if(getIntent().getStringExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID) != null) {
+                arguments.putString(GridSchemeActivity.ACTIVITY_FEATURE_ID,
+                        getIntent().getStringExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID));
 
+                arguments.putParcelable(DataProvider.m_ID,
+                        getIntent().getParcelableExtra(DataProvider.m_ID));
+
+                arguments.putInt(StorageKind.m_ID, StorageKind.LOCAL.getValue());
+
+                Intent intent = new Intent(MainListDetailActivity.this, GridSchemeActivity.class);
+
+                intent.putExtras(arguments);
+                startActivity(intent);
+                finish();
             }
             /*else if(getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID) != null) {
 

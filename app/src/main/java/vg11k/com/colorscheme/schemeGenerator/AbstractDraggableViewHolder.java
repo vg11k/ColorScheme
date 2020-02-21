@@ -27,6 +27,8 @@ public abstract class AbstractDraggableViewHolder extends AbstractViewHolder {
         return m_dragImage;
     }
 
+    public View getContentView() {return mContentView;}
+
 
 
     public interface ICollapsableViewHolder {

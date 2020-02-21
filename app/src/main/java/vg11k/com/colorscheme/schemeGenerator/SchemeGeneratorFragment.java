@@ -1,6 +1,7 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -38,6 +40,7 @@ import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.IFragmentListener;
 import vg11k.com.colorscheme.R;
+import vg11k.com.colorscheme.SchemeModel;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -77,6 +80,8 @@ public class SchemeGeneratorFragment
         // Required empty public constructor
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -91,6 +96,10 @@ public class SchemeGeneratorFragment
         // TODO: Update argument type and name
         void onSchemeGeneratorFragmentInteraction(Uri uri);
         void requestColorPickerFragment();
+    }
+
+    public List<AbstractSchemeGeneratorLineModel> getValues() {
+        return mValues;
     }
 
     public void setFragmentListener(OnSchemeGeneratorFragmentInteractionListener listener) {
@@ -134,16 +143,15 @@ public class SchemeGeneratorFragment
             final Context context = m_view.getContext();
 
 
-            mValues.add(new ImageMiniPreviewLineModel(0));
+            SchemeModel editedModel = getArguments().getParcelable(SchemeModel.m_ID);
+            if(editedModel == null) {
+
+                mValues.add(new ImageMiniPreviewLineModel(0));
 
 
-
-
-
-
-            HeaderLineModel firstHeader = new HeaderLineModel(1, "Base");
-            firstHeader.setDraggable(false);
-            mValues.add(firstHeader);
+                HeaderLineModel firstHeader = new HeaderLineModel(1, getResources().getString(R.string.base));
+                firstHeader.setDraggable(false);
+                mValues.add(firstHeader);
 
             /*if (m_initialIndexes != null && m_initialProviderIndexes != null) {
 
@@ -164,6 +172,11 @@ public class SchemeGeneratorFragment
 
 
             }*/
+            }
+            else {
+                mValues.addAll(editedModel.getLines());
+            }
+
 
             mValues.add(new ButtonAddLineModel(mValues.size()));
 
@@ -253,8 +266,6 @@ public class SchemeGeneratorFragment
                 try {
                     bitmapImage = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), returnUri);
 
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -270,7 +281,6 @@ public class SchemeGeneratorFragment
             }
         }
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -371,7 +381,7 @@ public class SchemeGeneratorFragment
                 mixModel = targetModel.getMix();
             }
             else {
-                mixModel = new MixHeaderLineModel(targetHolder.getAdapterPosition(), targetHeader);
+                mixModel = new MixHeaderLineModel(targetHolder.getAdapterPosition(), targetHeader, getResources().getString(R.string.mix));
                 appendAt(mixModel, targetHolder.getAdapterPosition());
                 targetModel.setMix(mixModel);
             }
@@ -429,7 +439,7 @@ public class SchemeGeneratorFragment
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Ajouter un element au Schema")
+                builder.setTitle(getResources().getString(R.string.add_element_to_scheme))
                         .setItems(R.array.addElementsArray, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -458,7 +468,7 @@ public class SchemeGeneratorFragment
     public void askForNewHeader(final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Saisir nom de la section");
+        builder.setTitle(getResources().getString(R.string.set_section_name));
 
         final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -477,7 +487,7 @@ public class SchemeGeneratorFragment
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -530,7 +540,7 @@ public class SchemeGeneratorFragment
 
         //add it as new mix
         if(indexes.size() > 1) {
-            mixModel = new MixHeaderLineModel(mValues.size() - 1, headerToAttachNewColors);
+            mixModel = new MixHeaderLineModel(mValues.size() - 1, headerToAttachNewColors, getResources().getString(R.string.mix));
             appendLast(mixModel);
         }
 
@@ -538,12 +548,13 @@ public class SchemeGeneratorFragment
 
             ColorLayerLineModel color =
                 new ColorLayerLineModel(
+                        getContext().getResources(),
                     mValues.size() - 1,
                     indexes.get(valueIndex),
                     providerIndexes.get(valueIndex),
                     "#" + m_dataProvider.getColorRGB(indexes.get(valueIndex) + 1),
-                    m_dataProvider.getColorNameForProvider(indexes.get(valueIndex) + 1,
-                            providerIndexes.get(valueIndex) + 1),
+                    m_dataProvider.getColorNameForProvider(indexes.get(valueIndex),
+                            providerIndexes.get(valueIndex)),
                         headerToAttachNewColors);
 
             appendLast(color);

@@ -1,16 +1,9 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,9 +21,6 @@ import java.util.Set;
 
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.R;
-
-import static android.app.Activity.RESULT_OK;
-import static android.support.v4.app.ActivityCompat.requestPermissions;
 
 /**
  * Created by Julien on 29/01/2020.
@@ -51,7 +40,7 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
     private final List<AbstractSchemeGeneratorLineModel> mValues;
     private Context m_context;
     private View m_view;
-    private final DataProvider mdataProvider;
+    private final DataProvider m_dataProvider;
     private ViewGroup mParent;
 
     private int holderCounter = 0;
@@ -78,7 +67,7 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
                                           View.OnClickListener imageClickListener,
                                           StartDragListener dragListener) {
 
-        mdataProvider = dataProvider;
+        m_dataProvider = dataProvider;
         m_context = context;
         m_view = view;
         mValues = values;
@@ -178,6 +167,7 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
 
             initiateDraggableListeners(viewHolder);
             initiateKindOfProcessListener(viewHolder);
+            initiateSwitchProviderListener(viewHolder);
         }
         else if(abModel.getViewType() == SchemeViewTypeLine.VIEW_TYPE_HEADER) {
             HeaderLineViewHolder viewHolder = (HeaderLineViewHolder) holder;
@@ -284,21 +274,24 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
             @Override
             public boolean onLongClick(View view) {
 
-                final ArrayList<String> kindOfProcessNames = new ArrayList<String>();
+               // final ArrayList<String> kindOfProcessNames = new ArrayList<String>();
+                final String[] kindOfProcessArray = m_context.getResources().getStringArray(R.array.selectKindOfProcessArray);/*= new ArrayList<String>();
                 for(KindOfProcess k : KindOfProcess.values()) {
                     kindOfProcessNames.add(k.getName());
                 }
 
-                kindOfProcessNames.add("Annuler");
+                kindOfProcessNames.add(m_context.getResources().getString(R.string.cancel));*/
+
+
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(m_context);
-                builder.setTitle("Select a process to apply")
-                        .setItems((String[]) kindOfProcessNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
+                builder.setTitle(m_context.getResources().getString(R.string.select_process_to_apply))
+                        .setItems(kindOfProcessArray, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
-                                if(which != kindOfProcessNames.size() - 1) {
+                                if(which != kindOfProcessArray.length - 1) {
 
-                                    holderWithProcess.setKindOfProcessOnModel(KindOfProcess.valueOf(which));
+                                    holderWithProcess.setKindOfProcessOnModel(KindOfProcess.valueOf(which), m_context.getResources());
                                     notifyDataSetChanged();
                                 }
 
@@ -309,6 +302,78 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
                 return false;
             }
         });
+    }
+
+    public void initiateSwitchProviderListener(final ColorLayerLineViewHolder holder) {
+        holder.getColorCircle().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                final ColorLayerLineModel colorModel = (ColorLayerLineModel) holder.getModel();
+
+                int initialProviderIndex = colorModel.getCurrentProviderIndex();
+                final int initialColorIndex = colorModel.getCurrentColorIndex();
+                if(initialProviderIndex == -1) {
+                    throw new IllegalStateException("Error initiateSwitchProviderListener, index should be initialized");
+                }
+
+                String[] allColorNames = m_dataProvider.getLine(initialColorIndex);
+                final ArrayList<String> candidatesColorNames = new ArrayList<String>();
+                final ArrayList<Integer> candidatesColorIndexes =  new ArrayList<Integer>();
+                final ArrayList<String> candidatesDisplayed = new ArrayList<String>();
+
+                for(int i = 0; i < m_dataProvider.getProviderCount(); i++) {
+                    if(i != initialProviderIndex) {
+                        String colorNameOfProvider = m_dataProvider.getColorNameForProvider(initialColorIndex, i);
+                        if(!colorNameOfProvider.isEmpty()) {
+                            candidatesColorNames.add(colorNameOfProvider);
+                            candidatesColorIndexes.add(i);
+                            candidatesDisplayed.add(m_dataProvider.getColorProvider(i) + " : " + colorNameOfProvider);
+                        }
+                    }
+                }
+
+                String currentProviderName = m_dataProvider.getColorProvider(initialProviderIndex);
+
+
+                candidatesDisplayed.add(m_context.getResources().getString(R.string.keep) + " " + currentProviderName + ".");
+
+                String title = m_context.getResources().getString(R.string.select_another_provider_for)  +
+                        "\n" + colorModel.getColorName() + " (" + colorModel.getColorRGB() + ")";
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(m_context);
+                builder.setTitle(title)
+                        .setItems((String[]) candidatesDisplayed.toArray(new String[0]), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                if(which != candidatesDisplayed.size() - 1) {
+
+                                    String selectedColorName = candidatesColorNames.get(which);
+                                    int selectedProviderIndex = candidatesColorIndexes.get(which);
+
+                                    //debug
+                                    //String onProviderValue = m_dataProvider.getColorNameForProvider(initialColorIndex + 1, selectedProviderIndex + 1);
+
+                                    colorModel.setColorName(selectedColorName);
+                                    colorModel.setCurrentProviderIndex(selectedProviderIndex);
+
+                                    notifyDataSetChanged();
+                                }
+
+                            }
+                        });
+                builder.create().show();
+
+
+                return false;
+            }
+
+
+
+
+        });
+
+
     }
 
     public void initiateCollapseAndExpandListeners (final AbstractDraggableViewHolder.ICollapsableViewHolder viewHolder) {
@@ -615,7 +680,9 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(m_context);
-                builder.setMessage("Melanger " + m_hoveredHolder.mContentView.getText() + "\n et  " + holder.mContentView.getText() + " ?")
+                builder.setMessage(m_context.getResources().getString(R.string.mix) + " " +
+                        m_hoveredHolder.mContentView.getText() + "\n " +
+                        m_context.getResources().getString(R.string.and) + " " + holder.mContentView.getText() + " ?")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
@@ -625,7 +692,7 @@ class SchemeGeneratorFragmentAdapter extends RecyclerView.Adapter<AbstractViewHo
                                         .setAction("Action", null).show();*/
                             }
                         })
-                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(m_context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User cancelled the dialog
                             }

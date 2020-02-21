@@ -4,10 +4,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -30,9 +33,13 @@ import java.util.List;
 import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.MainListActivity;
+import vg11k.com.colorscheme.MainListDetailActivity;
 import vg11k.com.colorscheme.R;
+import vg11k.com.colorscheme.SchemeModel;
+import vg11k.com.colorscheme.StorageKind;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
 import vg11k.com.colorscheme.colorPicker.OnColorPickerItemFragmentInteractionListener;
+import vg11k.com.colorscheme.grid.GridSchemeActivity;
 
 public class SchemeGeneratorActivity extends AppCompatActivity
         implements SchemeGeneratorFragment.OnSchemeGeneratorFragmentInteractionListener,
@@ -48,6 +55,7 @@ public class SchemeGeneratorActivity extends AppCompatActivity
     private ColorPickerItemFragment m_pickerFragment;
 
     boolean m_isPickerFragmentDisplayed;
+    private DataProvider m_dataProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +92,16 @@ public class SchemeGeneratorActivity extends AppCompatActivity
             arguments.putString(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID,
                     getIntent().getStringExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID));
 
+            Parcelable editedSchemeParcel = getIntent().getParcelableExtra(SchemeModel.m_ID);
+            if(editedSchemeParcel != null) {
+                arguments.putParcelable(SchemeModel.m_ID, editedSchemeParcel);
+            }
+
             m_isPickerFragmentDisplayed = false;
 
-            arguments.putParcelable(DataProvider.m_ID,
-                    getIntent().getParcelableExtra(DataProvider.m_ID));
+            m_dataProvider = getIntent().getParcelableExtra(DataProvider.m_ID);
+
+            arguments.putParcelable(DataProvider.m_ID,m_dataProvider );
 
             m_generatorFragment = new SchemeGeneratorFragment();
             m_generatorFragment.setArguments(arguments);
@@ -99,6 +113,8 @@ public class SchemeGeneratorActivity extends AppCompatActivity
         }
         else {
             //RESTORE THE FRAGMENTS INSTANCE
+
+            System.out.println("Should restore the generator frag here");
 
 
             if (!m_generatorFragment.isInLayout()) {
@@ -264,8 +280,28 @@ public class SchemeGeneratorActivity extends AppCompatActivity
             transaction.commit();
 
         }
-        else
-            NavUtils.navigateUpFromSameTask(this);//get back to parent activity
+        else {
+
+            Bundle arguments = new Bundle();
+            arguments.putString(GridSchemeActivity.ACTIVITY_FEATURE_ID,
+                    getIntent().getStringExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID));
+
+            arguments.putParcelable(DataProvider.m_ID,
+                    getIntent().getParcelableExtra(DataProvider.m_ID));
+
+            arguments.putInt(StorageKind.m_ID, StorageKind.LOCAL.getValue());
+
+            Intent intent = new Intent(SchemeGeneratorActivity.this, GridSchemeActivity.class);
+
+            intent.putExtras(arguments);
+            startActivity(intent);
+            finish();
+
+            /*FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.popBackStackImmediate();
+            super.onBackPressed();*/
+            //NavUtils.navigateUpFromSameTask(this);//get back to parent activity
+        }
 
     }
 
@@ -273,7 +309,7 @@ public class SchemeGeneratorActivity extends AppCompatActivity
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(m_generatorFragment.getContext());
-        builder.setTitle("Saisir nom du Schema");
+        builder.setTitle(getResources().getString(R.string.enter_scheme_name));
 
         final EditText input = new EditText(m_generatorFragment.getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -287,13 +323,26 @@ public class SchemeGeneratorActivity extends AppCompatActivity
                 String inputText = input.getText().toString();
 
                 if(!inputText.isEmpty()) {
-                        Snackbar.make(m_generatorFragment.getView(), "Sauvegarde reclamee", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+
 
                         //TODO generate json & copy image bitmap
+
+                        if(m_dataProvider != null) {
+
+                            ArrayList<AbstractSchemeGeneratorLineModel> listWithoutButton = new ArrayList<AbstractSchemeGeneratorLineModel>();
+                            listWithoutButton.addAll(m_generatorFragment.getValues());
+                            listWithoutButton.remove(listWithoutButton.size() - 1);
+                            SchemeModel scheme = new SchemeModel(inputText, listWithoutButton);
+                            m_dataProvider.persistSchemeGeneratorData(m_generatorFragment.getContext(), scheme);
+                            Snackbar.make(m_generatorFragment.getView(), getResources().getString(R.string.save_done), Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+
+
+
                 }
                 else {
-                    Snackbar.make(m_generatorFragment.getView(), "Sauvegarde annulee", Snackbar.LENGTH_LONG)
+                    Snackbar.make(m_generatorFragment.getView(), getResources().getString(R.string.save_canceled), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
 
@@ -303,7 +352,7 @@ public class SchemeGeneratorActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                Snackbar.make(m_generatorFragment.getView(), "Sauvegarde annulee", Snackbar.LENGTH_LONG)
+                Snackbar.make(m_generatorFragment.getView(), getResources().getString(R.string.save_canceled), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

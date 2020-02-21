@@ -1,5 +1,6 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,8 +34,8 @@ public class MixHeaderLineViewHolder
     }
 
     @Override
-    public void setKindOfProcessOnModel(KindOfProcess k) {
-        ((MixHeaderLineModel)getModel()).setKindOfProcess(k);
+    public void setKindOfProcessOnModel(KindOfProcess k, Resources resources) {
+        ((MixHeaderLineModel)getModel()).setKindOfProcess(k, resources);
     }
 
     @Override

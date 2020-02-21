@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="addElementsArray">
-        <item>Ajouter une couleur</item>
-        <item>Ajouter une section</item>
-        <item>Annuler</item>
+        <item>@string/add_color</item>
+        <item>@string/add_section</item>
+        <item>@string/cancel</item>
     </string-array>
     <string-array name="selectKindOfProcessArray">
-        <item>Ajouter une couleur</item>
+        <!--<item>Ajouter une couleur</item>
         <item>Ajouter une section</item>
-        <item>Annuler</item>
-
-
-
-        LAYER(0, "Layer"),
-        AERO(1, "Aero"),
-        BRUSH(2, "Brush"),
-        LAVIS(3, "Lavis"),
-        GLACIS(4, "Glacis"),
-        DETAIL(5, "Detail");
+        <item>Annuler</item>-->
+        <item>@string/layer</item>
+        <item>@string/aero</item>
+        <item>@string/brush</item>
+        <item>@string/lavis</item>
+        <item>@string/glacis</item>
+        <item>@string/detail</item>
+        <item>@string/cancel</item>
     </string-array>
 </resources>

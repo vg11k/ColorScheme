@@ -16,6 +16,7 @@ import java.util.List;
 
 import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
+import vg11k.com.colorscheme.grid.GridSchemeActivity;
 import vg11k.com.colorscheme.menus.MenuGenerique;
 import vg11k.com.colorscheme.menus.MenusContainer;
 import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
@@ -118,6 +119,9 @@ public class MainListActivity extends AppCompatActivity {
                     }*/
                     else if(SchemeGeneratorActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
                         intent.putExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID, feature.getId());
+                    }
+                    else if(GridSchemeActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
+                        intent.putExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID, feature.getId());
                     }
 
                     intent.putExtra(DataProvider.m_ID, m_provider);

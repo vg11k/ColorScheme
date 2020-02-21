@@ -1,5 +1,7 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,9 +50,14 @@ public class ColorLayerLineViewHolder
     }
 
     @Override
-    public void setKindOfProcessOnModel(KindOfProcess k) {
-        ((ColorLayerLineModel)getModel()).setKindOfProcess(k);
+    public void setKindOfProcessOnModel(KindOfProcess k, Resources resources) {
+        ((ColorLayerLineModel)getModel()).setKindOfProcess(k, resources);
     }
+
+    public View getColorCircle() {
+        return mColorCircle;
+    }
+
 
     /*public ImageView getDragImage() {
         return m_dragImage;

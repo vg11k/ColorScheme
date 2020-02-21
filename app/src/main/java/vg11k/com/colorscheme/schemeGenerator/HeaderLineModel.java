@@ -1,7 +1,12 @@
 package vg11k.com.colorscheme.schemeGenerator;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -13,11 +18,22 @@ public class HeaderLineModel
         extends AbstractSchemeGeneratorLineModel
         implements AbstractSchemeGeneratorLineModel.ICollapsableModel {
 
+    @SerializedName("headerContent")
+    @Expose
     private String m_headerContent ="none";
-    private ArrayList<AbstractSchemeGeneratorLineModel> m_childrenLayerLines;
 
+    private transient ArrayList<AbstractSchemeGeneratorLineModel> m_childrenLayerLines;
+
+    @SerializedName("isCollapsed")
+    @Expose
     private boolean m_isCollapsed;
+
+    @SerializedName("collapseIconState")
+    @Expose
     private int m_collapseIconState;
+
+    @SerializedName("expandIconState")
+    @Expose
     private int m_expandIconState;
 
     protected HeaderLineModel(int index) {
@@ -111,5 +127,43 @@ public class HeaderLineModel
     public int getCollapsedIconState() {
         return m_collapseIconState;
     }
+
+    /*    private String m_headerContent ="none";
+    private ArrayList<AbstractSchemeGeneratorLineModel> m_childrenLayerLines;
+
+    private boolean m_isCollapsed;
+    private int m_collapseIconState;
+    private int m_expandIconState;*/
+
+
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest,flags);
+        dest.writeString(m_headerContent);
+        dest.writeByte((byte) (m_isCollapsed ? 1 : 0));
+        dest.writeInt(m_collapseIconState);
+        dest.writeInt(m_expandIconState);
+    }
+
+    protected HeaderLineModel(Parcel in) {
+        super(in);
+        m_headerContent = in.readString();
+        m_isCollapsed = in.readByte() != 0;
+        m_collapseIconState = in.readInt();
+        m_expandIconState = in.readInt();
+
+        m_childrenLayerLines = new ArrayList<AbstractSchemeGeneratorLineModel>();
+    }
+
+
+
+    public static final Parcelable.Creator<HeaderLineModel> CREATOR = new Parcelable.Creator<HeaderLineModel>() {
+        public HeaderLineModel createFromParcel(Parcel in) {
+            return new HeaderLineModel (in);
+        }
+
+        public HeaderLineModel [] newArray(int size) {
+            return new HeaderLineModel[size];
+        }
+    };
 
 }

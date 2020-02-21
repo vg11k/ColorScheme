@@ -27,6 +27,7 @@ android {
                             'src/main/res/layouts/main',
                             'src/main/res/layouts/others',
                             'src/main/res/layouts/schemeGenerator',
+                            'src/main/res/layouts/gridScheme',
                             'src/main/res/layouts',
                             'src/main/res'
                     ]
@@ -45,7 +46,11 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.opencsv:opencsv:4.6'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
     testImplementation 'junit:junit:4.12'
+
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    compile 'com.google.code.gson:gson:2.7'
 }
