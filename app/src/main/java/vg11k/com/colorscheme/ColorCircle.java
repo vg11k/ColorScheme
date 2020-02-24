@@ -41,6 +41,8 @@ public class ColorCircle extends View {
 
     public void setRGBBackgroundColor(int color) {m_RGBBackgroundColor = color;}
 
+    public int getRGBBackgroundColor() { return m_RGBBackgroundColor; }
+
     @Override
     protected void onDraw(Canvas canvas)
     {

@@ -24,6 +24,7 @@ import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.IFragmentListener;
 import vg11k.com.colorscheme.R;
+import vg11k.com.colorscheme.SchemeModel;
 import vg11k.com.colorscheme.utils.ItemClickSupport;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class ColorPickerItemFragment extends Fragment {
     private List<ColorPickerLine> m_colorPickerLines;
 
     private ColorPickerItemRecyclerViewAdapter m_adapter;
+    private ArrayList<Integer> m_lineDisplayColors = new ArrayList<Integer>();
 
     private View m_view;
 
@@ -67,15 +69,6 @@ public class ColorPickerItemFragment extends Fragment {
 
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    /*public static ColorPickerItemFragment newInstance(int columnCount) {
-        ColorPickerItemFragment fragment = new ColorPickerItemFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,9 +93,21 @@ public class ColorPickerItemFragment extends Fragment {
 
                 String[] line = m_dataProvider.getLine(i+1);
                 m_colorPickerLines.add(new ColorPickerLine(i,line));
+                m_lineDisplayColors.add(Color.WHITE);
             }
 
-            //m_colorPickerLines = DummyContent.ITEMS;
+            ArrayList<Integer> selectedIndexes;
+            if(savedInstanceState != null) {
+                selectedIndexes = savedInstanceState.getIntegerArrayList("selectedIndexes");
+                if (selectedIndexes != null) {
+                    m_selectedProvider = savedInstanceState.getInt("selectedProvider");
+                    for (Integer i : selectedIndexes) {
+                        m_colorPickerLines.get(i).setSelected(true);
+                        m_lineDisplayColors.set(i, Color.parseColor("#00ff00"));
+                    }
+                }
+            }
+
         }
 
 
@@ -124,7 +129,7 @@ public class ColorPickerItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            m_adapter = new ColorPickerItemRecyclerViewAdapter(m_colorPickerLines, mListener, m_dataProvider);
+            m_adapter = new ColorPickerItemRecyclerViewAdapter(m_colorPickerLines, mListener, m_dataProvider, m_lineDisplayColors);
             recyclerView.setAdapter(m_adapter);
             configureOnClickRecyclerView(recyclerView);
 
@@ -136,6 +141,8 @@ public class ColorPickerItemFragment extends Fragment {
                     sendBackData(view);
                 }
             });
+
+            m_adapter.setSelectedProvider(m_selectedProvider);
 
         }
 
@@ -227,6 +234,7 @@ public class ColorPickerItemFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnColorPickerItemFragmentInteractionListener) {
             mListener = (OnColorPickerItemFragmentInteractionListener) context;
+            m_fragmentListener = (IFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnColorPickerItemFragmentInteractionListener");
@@ -255,10 +263,13 @@ public class ColorPickerItemFragment extends Fragment {
 
                         if(!colorPicker.isSelected()) {
                             color = Color.parseColor("#00ff00");
+
                             colorPicker.setSelected(true);
+                            m_lineDisplayColors.set(position, color);
                         }
                         else {
                             color = Color.WHITE;
+                            m_lineDisplayColors.set(position, color);
                             colorPicker.setSelected(false);
                         }
 
@@ -285,6 +296,23 @@ public class ColorPickerItemFragment extends Fragment {
 
     public void setFragmentListener(IFragmentListener listener) {
         m_fragmentListener = listener;
+    }
+
+    @Override
+    public  void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt("selectedProvider", m_selectedProvider);
+        ArrayList<Integer> selectedIndexes = new ArrayList<Integer>();
+        for(int i = 0; i < m_colorPickerLines.size(); i++) {
+            if(m_colorPickerLines.get(i).isSelected()) {
+                selectedIndexes.add(i);
+            }
+        }
+
+        outState.putIntegerArrayList("selectedIndexes", selectedIndexes);
+
+
+        super.onSaveInstanceState(outState);
     }
 
 }

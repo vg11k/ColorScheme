@@ -104,27 +104,58 @@ public class SchemeGeneratorActivity extends AppCompatActivity
             arguments.putParcelable(DataProvider.m_ID,m_dataProvider );
 
             m_generatorFragment = new SchemeGeneratorFragment();
+            m_generatorFragment.setRetainInstance(true);//DO NOT FORGET THIS LINE OR THE FRAG WILL BE REINIT AT ROTATE
             m_generatorFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_menu_detail_container, m_generatorFragment, "generator")
-                    .addToBackStack(null)
+                    .add(R.id.main_menu_detail_container, m_generatorFragment, SchemeGeneratorFragment.FRAGMENT_FEATURE_ID)
+                    .addToBackStack(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID)
                     .commit();
             //}
         }
         else {
-            //RESTORE THE FRAGMENTS INSTANCE
+            //RESTORE THE FRAGMENTS INSTANCE ON ROTATION FOR EXAMPLE
 
             System.out.println("Should restore the generator frag here");
 
+            m_isPickerFragmentDisplayed = savedInstanceState.getBoolean("isPickerDisplayed" );
 
-            if (!m_generatorFragment.isInLayout()) {
+            if(m_generatorFragment == null) {
+                m_generatorFragment = (SchemeGeneratorFragment) getSupportFragmentManager().getFragment(
+                        savedInstanceState, SchemeGeneratorFragment.FRAGMENT_FEATURE_ID);
 
-                m_isPickerFragmentDisplayed = false;
+                m_generatorFragment.setRetainInstance(true);//DO NOT FORGET THIS LINE OR THE FRAG WILL BE REINIT AT ROTATE
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, m_generatorFragment, "generator")
-                        .commit();
+                if (m_isPickerFragmentDisplayed) {
+                    m_pickerFragment = (ColorPickerItemFragment) getSupportFragmentManager().getFragment(
+                            savedInstanceState, ColorPickerItemFragment.FRAGMENT_FEATURE_ID);
+                }
+
+                m_dataProvider = savedInstanceState.getParcelable(DataProvider.m_ID);
+
+                if (!m_isPickerFragmentDisplayed) {
+
+                    //manager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    /*if(!m_generatorFragment.isInLayout()) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.main_menu_detail_container, m_generatorFragment, SchemeGeneratorFragment.FRAGMENT_FEATURE_ID)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                    else {*/
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.main_menu_detail_container, m_generatorFragment, SchemeGeneratorFragment.FRAGMENT_FEATURE_ID)
+                                .addToBackStack(null)
+                                .commit();
+                  //  }
+                } else if (!m_pickerFragment.isInLayout()) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_menu_detail_container, m_pickerFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
             }
 
         }
@@ -149,12 +180,13 @@ public class SchemeGeneratorActivity extends AppCompatActivity
         newFragment.setArguments(args);
 
         m_isPickerFragmentDisplayed = true;
+        m_pickerFragment = newFragment;
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 // Replace whatever is in the fragment_container view with this fragment,
 // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.main_menu_detail_container, newFragment, "picker");
+        transaction.replace(R.id.main_menu_detail_container, newFragment);
         transaction.addToBackStack(null);
 
 // Commit the transaction
@@ -239,7 +271,7 @@ public class SchemeGeneratorActivity extends AppCompatActivity
             }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment, "generator");
+            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment);
 
             transaction.addToBackStack(null);
             transaction.commit();
@@ -252,10 +284,20 @@ public class SchemeGeneratorActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+
 
         //Save the fragment's instance
-        getSupportFragmentManager().putFragment(outState, "generator", m_generatorFragment);
+        getSupportFragmentManager().putFragment(outState, SchemeGeneratorFragment.FRAGMENT_FEATURE_ID, m_generatorFragment);
+        if(m_pickerFragment != null) {
+            getSupportFragmentManager().putFragment(outState, ColorPickerItemFragment.FRAGMENT_FEATURE_ID, m_pickerFragment);
+        }
+
+        outState.putBoolean("isPickerDisplayed",m_isPickerFragmentDisplayed );
+        outState.putParcelable(DataProvider.m_ID, m_dataProvider);
+
+        /* private FloatingActionButton m_fab;*/
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -274,7 +316,7 @@ public class SchemeGeneratorActivity extends AppCompatActivity
 
             m_pickerFragment = null;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment, "generator");
+            transaction.replace(R.id.main_menu_detail_container, m_generatorFragment);
 
             transaction.addToBackStack(null);
             transaction.commit();

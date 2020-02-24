@@ -27,14 +27,16 @@ public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<Col
     private ViewGroup mParent;
     private int mSelectedProvider;
     private ArrayList<ColorViewHolder> m_holders;
+    private ArrayList<Integer> m_lineBGColor;
 
 
-    public ColorPickerItemRecyclerViewAdapter(List<ColorPickerLine> items, OnColorPickerItemFragmentInteractionListener listener, DataProvider dataProvider) {
+    public ColorPickerItemRecyclerViewAdapter(List<ColorPickerLine> items, OnColorPickerItemFragmentInteractionListener listener, DataProvider dataProvider, ArrayList<Integer> lineBGColor) {
         mValues = items;
         mListener = listener;
         mdataProvider = dataProvider;
         mSelectedProvider = 0;
         m_holders = new ArrayList<ColorViewHolder>();
+        m_lineBGColor = lineBGColor;
     }
 
 
@@ -48,6 +50,9 @@ public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<Col
 
         ColorViewHolder holder = new ColorViewHolder(view, mdataProvider);
         m_holders.add(holder);
+
+        view.setBackgroundColor(holder.mColorCircle.getRGBBackgroundColor());
+
         System.out.println("Holder size : " + m_holders.size());
         return holder;
     }
@@ -119,6 +124,7 @@ public class ColorPickerItemRecyclerViewAdapter extends RecyclerView.Adapter<Col
         holder.mContentView.setText(mValues.get(position).getColorName());
         holder.mColorCircle.setRGBColor(mValues.get(position).getcolorRGB());
         holder.setVisibility(mValues.get(position).getVisible());
+        holder.mView.setBackgroundColor(m_lineBGColor.get(position));
 
     }
 

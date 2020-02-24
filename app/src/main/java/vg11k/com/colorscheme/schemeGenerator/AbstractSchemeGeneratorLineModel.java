@@ -213,17 +213,18 @@ public abstract class AbstractSchemeGeneratorLineModel implements Parcelable {
         return 0;
     }
 
-    /*public static final Creator<AbstractSchemeGeneratorLineModel> CREATOR = new Creator<AbstractSchemeGeneratorLineModel>() {
+    public static final Creator<AbstractSchemeGeneratorLineModel> CREATOR = new Creator<AbstractSchemeGeneratorLineModel>() {
         @Override
         public AbstractSchemeGeneratorLineModel createFromParcel(Parcel in) {
-            return AbstractSchemeGeneratorLineModel.getConcreteClass(in);//new AbstractSchemeGeneratorLineModel(in);
+            return null;//damnit, it should always call childrens functions
+            // new AbstractSchemeGeneratorLineModel(in);
         }
 
         @Override
         public AbstractSchemeGeneratorLineModel[] newArray(int size) {
             return new AbstractSchemeGeneratorLineModel[size];
         }
-    };*/
+    };
 
 
 }

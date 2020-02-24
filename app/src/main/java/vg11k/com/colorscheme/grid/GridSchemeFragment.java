@@ -47,25 +47,25 @@ public class GridSchemeFragment extends Fragment {
         // Required empty public constructor
     }
 
-   /* // TODO: Rename and change types and number of parameters
-    public static GridSchemeFragment newInstance(String param1, String param2) {
-        GridSchemeFragment fragment = new GridSchemeFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
 
-            m_dataProvider = getArguments().getParcelable(DataProvider.m_ID);
-            m_storageKind = StorageKind.valueOf(getArguments().getInt(StorageKind.m_ID));
+                m_dataProvider = getArguments().getParcelable(DataProvider.m_ID);
+                m_storageKind = StorageKind.valueOf(getArguments().getInt(StorageKind.m_ID));
 
-            //data initialization need a context
+                //data initialization need a context
 
-            m_view = null;
+                m_view = null;
+            }
+        }
+        else {
+
+
+            m_dataProvider = savedInstanceState.getParcelable(DataProvider.m_ID);
+            m_storageKind = StorageKind.valueOf(savedInstanceState.getInt("storageKind"));
         }
     }
 
@@ -100,48 +100,7 @@ public class GridSchemeFragment extends Fragment {
                 } else {
                     manager = new GridLayoutManager(context, mColumnCount);
                     recyclerView.setLayoutManager(manager);
-                    //throw new IllegalStateException("Should be only one column");
                 }
-
-                /*View.OnLongClickListener deleteListener = new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        @Override
-                        public boolean onLongClick(View view) {
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(m_context);
-                            builder.setMessage("Delete selected Scheme ?")
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-
-                                            int index = m_values.indexOf(s);
-
-                                            m_dataProvider.removeFile()
-                                            m_values.remove(s);
-
-
-                                            File fdelete = new File(uri.getPath());
-                                            if (fdelete.exists()) {
-                                                if (fdelete.delete()) {
-                                                    System.out.println("file Deleted :" + uri.getPath());
-                                                } else {
-                                                    System.out.println("file not Deleted :" + uri.getPath());
-                                                }
-                                            }
-                                            m_adapter.notifyItemRemoved(index);
-                                        }
-                                    })
-                                    .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            // User cancelled the dialog
-                                        }
-                                    });
-                            builder.create().show();
-
-                            return false;
-                        }
-                    }
-                };*/
 
                 m_adapter = new GridSchemeFragmentAdapter(m_dataProvider, context, m_values, m_storageKind, mListener);
                 recyclerView.setAdapter(m_adapter);
@@ -203,6 +162,18 @@ public class GridSchemeFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
         void startGeneratorOnExistingScheme(int selectedSchemeIndexToEdit);
+    }
+
+    @Override
+    public  void onSaveInstanceState(Bundle outState) {
+
+        //save the fragment here !
+        outState.putParcelable(DataProvider.m_ID, m_dataProvider);
+        outState.putInt("storageKind", m_storageKind.getValue());
+
+        super.onSaveInstanceState(outState);
+
+
     }
 
 }

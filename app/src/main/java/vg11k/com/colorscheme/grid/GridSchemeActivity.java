@@ -58,14 +58,31 @@ public class GridSchemeActivity
             //m_gridFragment.addStartActivityListener(startActivityListener);
 
             m_gridFragment.setArguments(arguments);
+            m_gridFragment.setRetainInstance(true);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_menu_detail_container, m_gridFragment, "grid")
+                    .add(R.id.main_menu_detail_container, m_gridFragment, GridSchemeFragment.FRAGMENT_FEATURE_ID)
                     .addToBackStack(null)
                     .commit();
 
         }
         else {
             //RESTORE THE FRAGMENTS INSTANCE
+
+            m_dataProvider = savedInstanceState.getParcelable(DataProvider.m_ID);
+            m_storageKind = StorageKind.valueOf(savedInstanceState.getInt("storageKind"));
+
+            if(m_gridFragment == null) {
+                m_gridFragment = (GridSchemeFragment) getSupportFragmentManager().getFragment(
+                        savedInstanceState, GridSchemeFragment.FRAGMENT_FEATURE_ID);
+            }
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_menu_detail_container, m_gridFragment, GridSchemeFragment.FRAGMENT_FEATURE_ID)
+                    .addToBackStack(null)
+                    .commit();
+
+
             System.out.println("Should restore the grid frag here");
         }
     }
@@ -80,6 +97,19 @@ public class GridSchemeActivity
         if(fragment instanceof GridSchemeFragment) {
             ((GridSchemeFragment) fragment).setFragmentListener(this);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+
+        //Save the fragment's instance
+
+        getSupportFragmentManager().putFragment(outState,GridSchemeFragment.FRAGMENT_FEATURE_ID, m_gridFragment);
+        outState.putParcelable(DataProvider.m_ID, m_dataProvider);
+        outState.putInt("storageKind", m_storageKind.getValue());
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override

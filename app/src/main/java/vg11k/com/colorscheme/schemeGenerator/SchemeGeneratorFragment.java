@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -43,6 +45,7 @@ import vg11k.com.colorscheme.R;
 import vg11k.com.colorscheme.SchemeModel;
 
 import static android.app.Activity.RESULT_OK;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +77,7 @@ public class SchemeGeneratorFragment
 
     private OnSchemeGeneratorFragmentInteractionListener m_fragmentListener;
 
-    private final List<AbstractSchemeGeneratorLineModel> mValues = new ArrayList<AbstractSchemeGeneratorLineModel>();
+    private final ArrayList<AbstractSchemeGeneratorLineModel> mValues = new ArrayList<AbstractSchemeGeneratorLineModel>();
 
     public SchemeGeneratorFragment() {
         // Required empty public constructor
@@ -112,12 +115,39 @@ public class SchemeGeneratorFragment
 
         setHasOptionsMenu(false);
 
-        if (getArguments() != null) {
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
 
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+                mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
 
-            //String your_variable = getArguments().getString("your_key");
-            m_dataProvider = getArguments().getParcelable(DataProvider.m_ID);
+                //String your_variable = getArguments().getString("your_key");
+                m_dataProvider = getArguments().getParcelable(DataProvider.m_ID);
+
+                int nbLines = m_dataProvider.getLinesCount() - 1;//we don't count the header
+                for (int i = 0; i < nbLines; i++) {
+
+                    String[] line = m_dataProvider.getLine(i + 1);
+                    m_listOfPickerLines.add(new ColorPickerLine(i, line));
+                }
+                m_initialIndexes = getArguments().getIntegerArrayList("colorIndexes");
+                m_initialProviderIndexes = getArguments().getIntegerArrayList("providerIndexes");
+
+                m_view = null;
+            }
+        }
+        else {
+
+
+            m_initialIndexes = savedInstanceState.getIntegerArrayList("initialIndexes");
+            m_initialProviderIndexes = savedInstanceState.getIntegerArrayList("initialProviderIndexes");
+            m_dataProvider = savedInstanceState.getParcelable(DataProvider.m_ID);
+
+
+            //done in the createView with editedModel
+            SchemeModel transitModel = savedInstanceState.getParcelable(SchemeModel.m_ID);
+            mValues.clear();
+            mValues.addAll(transitModel.getLines());
+
 
             int nbLines = m_dataProvider.getLinesCount() - 1;//we don't count the header
             for (int i = 0; i < nbLines; i++) {
@@ -125,11 +155,8 @@ public class SchemeGeneratorFragment
                 String[] line = m_dataProvider.getLine(i + 1);
                 m_listOfPickerLines.add(new ColorPickerLine(i, line));
             }
-            m_initialIndexes = getArguments().getIntegerArrayList("colorIndexes");
-            m_initialProviderIndexes = getArguments().getIntegerArrayList("providerIndexes");
-
-            m_view = null;
         }
+
 
 
     }
@@ -142,16 +169,16 @@ public class SchemeGeneratorFragment
             m_view = inflater.inflate(R.layout.fragment_scheme_generator, container, false);
             final Context context = m_view.getContext();
 
+            if(mValues.isEmpty()) {
+                SchemeModel editedModel = getArguments().getParcelable(SchemeModel.m_ID);
+                if (editedModel == null) {
 
-            SchemeModel editedModel = getArguments().getParcelable(SchemeModel.m_ID);
-            if(editedModel == null) {
-
-                mValues.add(new ImageMiniPreviewLineModel(0));
+                    mValues.add(new ImageMiniPreviewLineModel(0));
 
 
-                HeaderLineModel firstHeader = new HeaderLineModel(1, getResources().getString(R.string.base));
-                firstHeader.setDraggable(false);
-                mValues.add(firstHeader);
+                    HeaderLineModel firstHeader = new HeaderLineModel(1, getResources().getString(R.string.base));
+                    firstHeader.setDraggable(false);
+                    mValues.add(firstHeader);
 
             /*if (m_initialIndexes != null && m_initialProviderIndexes != null) {
 
@@ -172,13 +199,13 @@ public class SchemeGeneratorFragment
 
 
             }*/
-            }
-            else {
-                mValues.addAll(editedModel.getLines());
-            }
+                } else {
+                    mValues.addAll(editedModel.getLines());
+                }
 
 
-            mValues.add(new ButtonAddLineModel(mValues.size()));
+                mValues.add(new ButtonAddLineModel(mValues.size()));
+            }
 
             // Set the adapter
             if (m_view instanceof RecyclerView) {
@@ -523,6 +550,8 @@ public class SchemeGeneratorFragment
 
     public void addColors(ArrayList<Integer> indexes, ArrayList<Integer> providerIndexes) {
 
+
+
         if(indexes.size() == 0) {
             return;
         }
@@ -575,9 +604,20 @@ public class SchemeGeneratorFragment
 
     @Override
     public  void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
         //save the fragment here !
+
+        outState.putIntegerArrayList("initialIndexes", m_initialIndexes);
+        outState.putIntegerArrayList("initialProviderIndexes", m_initialProviderIndexes);
+        outState.putParcelable(DataProvider.m_ID, m_dataProvider);
+
+
+        SchemeModel transitModel = new SchemeModel("transfert", mValues);
+        outState.putParcelable(SchemeModel.m_ID, transitModel);
+
+        super.onSaveInstanceState(outState);
+
+
     }
 
 
