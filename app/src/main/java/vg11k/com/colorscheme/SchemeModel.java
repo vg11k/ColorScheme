@@ -36,6 +36,8 @@ public class SchemeModel implements Parcelable {
         return m_schemeName;
     }
 
+    public void setName(String s) { m_schemeName = s; }
+
     protected SchemeModel(Parcel in) {
         m_schemeName = in.readString();
         m_models = new ArrayList<AbstractSchemeGeneratorLineModel>();

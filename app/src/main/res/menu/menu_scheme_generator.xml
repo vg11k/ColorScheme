@@ -4,6 +4,13 @@
     tools:context="vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity">
 
     <item
+        android:id="@+id/action_upload_scheme"
+        android:icon="@drawable/cloud_upload_white_24dp"
+        android:title="@string/cloud_upload"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_save_scheme"
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/save_scheme"

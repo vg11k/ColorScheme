@@ -132,7 +132,7 @@ public class GridSchemeActivity
 
         //0 is the add new Scheme
         if(selectedSchemeIndexToEdit > 0) {
-            SchemeModel schemeModel = m_dataProvider.getSchemeGeneratorsData(this, m_gridFragment.getNameOfItem(selectedSchemeIndexToEdit));
+            SchemeModel schemeModel = m_dataProvider.getSchemeGeneratorsData(this, m_gridFragment.getNameOfItem(selectedSchemeIndexToEdit), m_storageKind);
             arguments.putParcelable(SchemeModel.m_ID, schemeModel);
         }
 
@@ -141,7 +141,7 @@ public class GridSchemeActivity
         Intent intent = new Intent(GridSchemeActivity.this, SchemeGeneratorActivity.class);
 
         intent.putExtras(arguments);
-        startActivity(intent);//reset the APP. WTF
+        startActivity(intent);
         finish();
     }
 

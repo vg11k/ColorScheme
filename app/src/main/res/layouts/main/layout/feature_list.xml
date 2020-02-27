@@ -6,9 +6,13 @@
     android:name="vg11k.com.colorscheme.FeatureListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00ffff"
-    app:layoutManager="LinearLayoutManager"
     tools:context="vg11k.com.colorscheme.MainListActivity"
     tools:listitem="@layout/item_list_content" />
-<!--    android:layout_marginLeft="16dp"
+
+<!--
+    app:layoutManager="LinearLayoutManager"
+
+
+
+android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"-->

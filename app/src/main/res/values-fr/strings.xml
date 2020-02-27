@@ -47,5 +47,13 @@
     <string name="save_canceled">Sauvegarde annulée.</string>
 
     <string name="delete_selected_scheme">Supprimer schéma selectionné ?</string>
+    <string name="user_editor_name">Editeur de profil</string>
+    <string name="cloud_upload">Mettre en ligne</string>
+    <string name="feature_not_developped_yet">Cette fonctionnalité n\'a pas encore été développée</string>
 
+    <string name="rename_scheme">Renommer le schéma</string>
+    <string name="upload_scheme_online">Mettre le schéma en ligne</string>
+    <string name="delete_scheme">Supprimer le schéma</string>
+    <string name="confirm_suppression">Confirmer la suppression du schéma </string>
+    <string name="delete">Delete</string>
 </resources>

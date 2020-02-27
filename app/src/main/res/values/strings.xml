@@ -46,5 +46,13 @@
     <string name="save_canceled">Save canceled.</string>
 
     <string name="delete_selected_scheme">Delete selected scheme ?</string>
+    <string name="user_editor_name">User editor</string>
+    <string name="cloud_upload">Send online</string>
+    <string name="feature_not_developped_yet">This feature as not been developped yet</string>
 
+    <string name="rename_scheme">Rename scheme</string>
+    <string name="upload_scheme_online">Upload scheme online</string>
+    <string name="delete_scheme">Delete scheme</string>
+    <string name="confirm_suppression">Confirm you want to delete the scheme </string>
+    <string name="delete">Delete</string>
 </resources>

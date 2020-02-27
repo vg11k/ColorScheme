@@ -26,15 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainListDetailActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".MainListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="vg11k.com.colorscheme.MainListActivity" />
-        </activity>
-        <activity
             android:name=".colorConverterTool.ColorConverterToolActivity"
             android:label="@string/title_activity_color_converter_tool"
             android:parentActivityName=".MainListActivity"
@@ -43,7 +34,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="vg11k.com.colorscheme.MainListActivity" />
         </activity>
-        <activity android:name=".grid.GridSchemeActivity"
+        <activity
+            android:name=".grid.GridSchemeActivity"
             android:label="@string/local_schemes"
             android:parentActivityName=".MainListActivity">
             <meta-data
@@ -51,14 +43,21 @@
                 android:value="vg11k.com.colorscheme.MainListActivity" />
         </activity>
         <activity
-        android:name=".schemeGenerator.SchemeGeneratorActivity"
-        android:label="@string/generator_name"
-        android:parentActivityName=".grid.GridSchemeActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="vg11k.com.colorscheme.grid.GridSchemeActivity" />
+            android:name=".schemeGenerator.SchemeGeneratorActivity"
+            android:label="@string/generator_name"
+            android:parentActivityName=".grid.GridSchemeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="vg11k.com.colorscheme.grid.GridSchemeActivity" />
         </activity>
-
+        <activity
+            android:name=".userEditor.UserEditorActivity"
+            android:label="@string/user_editor_name"
+            android:parentActivityName=".MainListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="vg11k.com.colorscheme.MainListActivity" />
+        </activity>
     </application>
 
 </manifest>

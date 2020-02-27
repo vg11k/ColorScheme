@@ -4,16 +4,16 @@
     tools:context="vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity">
 
 
-    <item
+    <!--<item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 
     <item
         android:id="@+id/action_switch_provider"
         android:icon="@android:drawable/ic_menu_preferences"
         android:title="@string/switch_provider"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="ifRoom" />
 </menu>

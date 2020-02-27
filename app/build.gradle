@@ -28,6 +28,7 @@ android {
                             'src/main/res/layouts/others',
                             'src/main/res/layouts/schemeGenerator',
                             'src/main/res/layouts/gridScheme',
+                            'src/main/res/layouts/userEditor',
                             'src/main/res/layouts',
                             'src/main/res'
                     ]

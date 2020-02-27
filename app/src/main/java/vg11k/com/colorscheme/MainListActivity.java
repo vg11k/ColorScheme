@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,7 +27,7 @@ import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
  * An activity representing a list of Items. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link MainListDetailActivity} representing
+ * lead to a {@link } representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
@@ -39,6 +41,7 @@ public class MainListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     static private DataProvider m_provider = null;
+    private View mainView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,112 +72,77 @@ public class MainListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.item_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        mainView = findViewById(R.id.item_list);
+        assert mainView != null;
+
+        final RecyclerView recyclerView = (RecyclerView) mainView;
+        GridLayoutManager manager = new GridLayoutManager(mainView.getContext(), 2);
+        recyclerView.setLayoutManager(manager);
+
+        ((RecyclerView)mainView).setAdapter(new MainGridAdapter(this, MenusContainer.FEATURESLIST, mTwoPane, m_provider));
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, MenusContainer.FEATURESLIST, mTwoPane));
-    }
-
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final MainListActivity mParentActivity;
-        private final List<MenuGenerique> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MenuGenerique feature = (MenuGenerique) view.getTag();
-
-                if (mTwoPane) {
-
-                    //TODO LATER
-                    /*Bundle arguments = new Bundle();
-                    arguments.putString(DummyFeatureDetailFragment.FRAGMENT_FEATURE_ID, feature.getId());
-                    DummyFeatureDetailFragment fragment = new DummyFeatureDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_menu_detail_container, fragment)
-                            .commit();*/
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, MainListDetailActivity.class);
-
-
-
-                    if(ColorPickerItemFragment.FRAGMENT_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(ColorPickerItemFragment.FRAGMENT_FEATURE_ID, feature.getId());
-                    }
-                    else if(ColorConverterToolActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID, feature.getId());
-                    }
-                    /*else if(SchemeGeneratorActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID, feature.getId());
-                    }
-                    else if(SchemeGeneratorFragment.FRAGMENT_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(SchemeGeneratorFragment.FRAGMENT_FEATURE_ID, feature.getId());
-                    }*/
-                    else if(SchemeGeneratorActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(SchemeGeneratorActivity.ACTIVITY_FEATURE_ID, feature.getId());
-                    }
-                    else if(GridSchemeActivity.ACTIVITY_TITLE.equals(feature.getContent())) {
-                        intent.putExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID, feature.getId());
-                    }
-
-                    intent.putExtra(DataProvider.m_ID, m_provider);
-
-                    context.startActivity(intent);
-                }
-            }
-        };
-
-        SimpleItemRecyclerViewAdapter(MainListActivity parent,
-                                      List<MenuGenerique> features,
-                                      boolean twoPane) {
-            mValues = features;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).getId());
-            holder.mContentView.setText(mValues.get(position).getContent());
-
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-        }
-    }
 
     public void initializeData() {
         if(m_provider == null) {
             m_provider = new DataProvider(this);
         }
+    }
+
+    public void startNewActivity (String featureId) {
+
+        if(GridSchemeActivity.ACTIVITY_FEATURE_ID.equals(featureId)) {
+
+            Bundle arguments = new Bundle();
+            arguments.putString(GridSchemeActivity.ACTIVITY_FEATURE_ID,
+                    getIntent().getStringExtra(GridSchemeActivity.ACTIVITY_FEATURE_ID));
+
+            arguments.putParcelable(DataProvider.m_ID,
+                    getIntent().getParcelableExtra(DataProvider.m_ID));
+
+            arguments.putInt(StorageKind.m_ID, StorageKind.LOCAL.getValue());
+
+
+
+            Intent intent = new Intent(MainListActivity.this, GridSchemeActivity.class);
+
+            intent.putExtras(arguments);
+            intent.putExtra(DataProvider.m_ID, m_provider);
+            startActivity(intent);
+        }
+        else if(ColorConverterToolActivity.ACTIVITY_FEATURE_ID.equals(featureId)) {
+
+            Bundle arguments = new Bundle();
+            arguments.putString(ColorConverterToolActivity.ACTIVITY_FEATURE_ID,
+                    getIntent().getStringExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID));
+
+            arguments.putParcelable(DataProvider.m_ID,
+                    getIntent().getParcelableExtra(DataProvider.m_ID));
+
+            Intent intent = new Intent(MainListActivity.this, ColorConverterToolActivity.class);
+
+            //ColorConverterToolActivity activity = new ColorConverterToolActivity();
+
+            intent.putExtras(arguments);
+            intent.putExtra(DataProvider.m_ID, m_provider);
+            startActivity(intent);
+        }
+
+
+
+        /*
+         arguments.putString(ColorConverterToolActivity.ACTIVITY_FEATURE_ID,
+                        getIntent().getStringExtra(ColorConverterToolActivity.ACTIVITY_FEATURE_ID));
+
+                arguments.putParcelable(DataProvider.m_ID,
+                        getIntent().getParcelableExtra(DataProvider.m_ID));
+
+                Intent intent = new Intent(MainListDetailActivity.this, ColorConverterToolActivity.class);
+
+                //ColorConverterToolActivity activity = new ColorConverterToolActivity();
+
+                intent.putExtras(arguments);
+                startActivity(intent);
+         */
     }
 }

@@ -38,6 +38,7 @@ import java.util.List;
 
 import vg11k.com.colorscheme.schemeGenerator.AbstractSchemeGeneratorLineModel;
 import vg11k.com.colorscheme.schemeGenerator.ImageMiniPreviewLineModel;
+import vg11k.com.colorscheme.schemeGenerator.KindOfProcess;
 import vg11k.com.colorscheme.utils.InterfaceAdapter;
 
 
@@ -52,6 +53,7 @@ public class DataProvider implements Parcelable {
     private final ArrayList<String[]> m_colorArray = new ArrayList<String[]>();
 
     private final String DIRNAME = "SCHEMES_";
+    private final String m_storedSchemeFilename = "storedSchemes";
 
     //public static final String m_localFolderName = "local";
     //public static final String m_webFolderName = "web";
@@ -140,7 +142,7 @@ public class DataProvider implements Parcelable {
 
 
 
-    public SchemeModel getSchemeGeneratorsData(Context context, String fileNameToRead) {
+    public SchemeModel getSchemeGeneratorsData(Context context, String fileNameToRead, StorageKind storageKind) {
 
         //final Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
         String jsonData = read(context, fileNameToRead);
@@ -153,7 +155,7 @@ public class DataProvider implements Parcelable {
             model = gson.fromJson(jsonData, listType);
 
             //try to load the image if it exist
-            Bitmap bitmap = getBitmapByName(context, model.getName(), StorageKind.LOCAL.getFullPath());//m_localFolderName);
+            Bitmap bitmap = getBitmapByName(context, model.getName(), storageKind.getFullPath());//m_localFolderName);
             if(bitmap != null) {
                 ((ImageMiniPreviewLineModel) model.getLines().get(0)).setBitMap(bitmap);
             }
@@ -215,25 +217,38 @@ public class DataProvider implements Parcelable {
     }
 
 
-    public boolean persistSchemeGeneratorData(Context context, SchemeModel model) {
+    public boolean persistSchemeGeneratorData(Context context, SchemeModel model, StorageKind storageKind) {
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(AbstractSchemeGeneratorLineModel.class, new InterfaceAdapter());
         Gson gson = builder.serializeNulls().disableHtmlEscaping().create();
 
         String formattedData = gson.toJson(model);
-        boolean done = create(context, model.getName(), formattedData);
+        boolean done = create(context, model.getName(), formattedData, storageKind);
 
         if(done) {
 
-            String filename = StorageKind.LOCAL.getFullPath() + model.getName() + ".PNG";
+            //create new files
+
+            String filename = storageKind.getFullPath() + model.getName() + ".PNG";
             //String filename = "/device/" + model.getName() + ".PNG";
             //filename = filename.replace("/device", m_localFolderPath);
 
             Bitmap bitmap = ((ImageMiniPreviewLineModel) model.getLines().get(0)).getBitMap();
             done = done & persistBitmap(filename, bitmap);
-        }
 
+            if(done) {
+                //update input-ordered list to display
+
+                ArrayList<String> schemes = new ArrayList<String>();
+                schemes.add(model.getName() + ".json");
+                schemes.addAll(getLocalJson(context));
+
+                String updatedJson = gson.toJson(schemes);
+
+                done = done &  create(context, m_storedSchemeFilename, updatedJson, storageKind);
+            }
+        }
 
         return done;
     }
@@ -272,7 +287,19 @@ public class DataProvider implements Parcelable {
 
         ArrayList<String> resultNames = new ArrayList<String>();
 
-        try {
+        //String folderName = StorageKind.LOCAL.getFullPath();
+        //String fileNameAndPath = folderName + "/" + m_storedSchemeFilename;
+        String storedSchemesJSON = read(context, m_storedSchemeFilename);
+        if(storedSchemesJSON != null && !storedSchemesJSON.isEmpty()) {
+
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.serializeNulls().disableHtmlEscaping().create();
+
+            ArrayList<String> dataParsed = gson.fromJson(storedSchemesJSON, new TypeToken<ArrayList<String>>() {}.getType());
+            resultNames.addAll(dataParsed);
+        }
+
+        /*try {
             //maybe remove the last slash ?
             String folderName = StorageKind.LOCAL.getFullPath();//getAndCreateIfMissingFolderName(context, m_localFolderName);
             File folder = new File(folderName);
@@ -286,7 +313,7 @@ public class DataProvider implements Parcelable {
         }
         catch(NullPointerException e) {
             System.out.println("Error in localJson : " + e.getMessage());
-        }
+        }*/
 
         return resultNames;
     }
@@ -342,7 +369,7 @@ public class DataProvider implements Parcelable {
         return subFolder.getAbsolutePath();
     }
 
-    private boolean create(Context context, String name, String jsonString) {
+    private boolean create(Context context, String name, String jsonString, StorageKind storageKind) {
 
         /*if(m_localFolderPath.isEmpty()) {
             m_localFolderPath = getAndCreateIfMissingFolderName(context, m_localFolderName);
@@ -360,7 +387,7 @@ public class DataProvider implements Parcelable {
 
         //private directory
         //filename = filename.replace("/device", m_localFolderPath);
-        String filename = StorageKind.LOCAL.getFullPath() + name + ".json";
+        String filename = storageKind.getFullPath() + name + ".json";
 
 
         File tempFile = new File(filename);
@@ -399,12 +426,12 @@ public class DataProvider implements Parcelable {
         }
     }
 
-    public void deleteFile(String s, Context context) {
+    private void deleteFile(String s, Context context, StorageKind storageKind) {
         /*if(m_localFolderPath.isEmpty()) {
             m_localFolderPath = getAndCreateIfMissingFolderName(context, m_localFolderName);
         }
         String fileNameAndPath = m_localFolderPath + "/" + s + ".json";*/
-        String fileNameAndPath = StorageKind.LOCAL.getFullPath() + s;
+        String fileNameAndPath = storageKind.getFullPath() + s;
         File fdelete = new File(fileNameAndPath);
         if(fdelete.exists()) {
             if (fdelete.delete()) {
@@ -417,8 +444,76 @@ public class DataProvider implements Parcelable {
             System.out.println("The file " + fileNameAndPath + " does not exist and so can't be deleted");
 
         }
+    }
+
+    public void deleteScheme(Context context, String schemeName, StorageKind storageKind) {
+        deleteFile(schemeName + ".json", context, storageKind);
+        deleteFile(schemeName + ".PNG", context, storageKind);
+
+        //update input-ordered list to display
+
+        String dummySchemeName = schemeName + ".json";
+
+        ArrayList<String> schemes = getLocalJson(context);
+        if(schemes.contains(dummySchemeName)) {
+            schemes.remove(dummySchemeName);
+        }
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.serializeNulls().disableHtmlEscaping().create();
+        String updatedJson = gson.toJson(schemes);
+
+        create(context, m_storedSchemeFilename, updatedJson, storageKind);
+    }
+
+    public void renameScheme(Context context, String schemeOldName, String schemeNewName, StorageKind storageKind) {
+
+        SchemeModel schemeToRename = getSchemeGeneratorsData(context, schemeOldName, storageKind);
+        schemeToRename.setName(schemeNewName);
+
+        persistSchemeGeneratorData(context, schemeToRename, storageKind);
+        deleteScheme(context,schemeOldName, storageKind);
+
+        /*boolean ok = true;
+        ok &= renameFile(schemeOldName + ".json", schemeNewName + ".json", context, storageKind);
+        ok &=renameFile(schemeOldName + ".PNG", schemeNewName + ".PNG", context, storageKind);*/
+       /*
+            String dummyOldSchemeName = schemeOldName + ".json";
+
+            ArrayList<String> schemes = getLocalJson(context);
+            if (schemes.contains(dummyOldSchemeName)) {
+                schemes.remove(dummyOldSchemeName);
+            }
 
 
+            ArrayList<String> schemesUpdated = new ArrayList<String>();
+            schemesUpdated.add(schemeNewName + ".json");
+            schemesUpdated.addAll(schemes);
 
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.serializeNulls().disableHtmlEscaping().create();
+            String updatedJson = gson.toJson(schemesUpdated);
+
+            create(context, m_storedSchemeFilename, updatedJson, storageKind);
+        }
+        else {
+            throw new IllegalStateException("An error occured at the rename from" + schemeOldName + " to " + schemeNewName);
+        }*/
+
+    }
+
+    private boolean renameFile(String fileOldName, String fileNewName, Context context, StorageKind storageKind) {
+        String oldFileNameAndPath = storageKind.getFullPath() + fileOldName;
+        String newFileNameAndPath =  storageKind.getFullPath() + fileNewName;
+
+        File from      = new File( oldFileNameAndPath);
+        File to        = new File(newFileNameAndPath);
+        if(from.renameTo(to)){
+            System.out.println("File renamed from : " + oldFileNameAndPath + " to " + newFileNameAndPath);
+            return true;
+        }
+
+        System.out.println("Rename failed");
+        return false;
     }
 }

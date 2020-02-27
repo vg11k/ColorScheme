@@ -68,7 +68,7 @@ public class ColorConverterToolActivity extends AppCompatActivity
             }
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String[] colors = Arrays.copyOfRange(m_dataProvider.getLine(0), 1, m_dataProvider.getLine(0).length);
         toolbar.setTitle(colors[m_selectedProvider]);

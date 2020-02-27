@@ -9,6 +9,7 @@ import vg11k.com.colorscheme.colorConverterTool.ColorConverterToolActivity;
 import vg11k.com.colorscheme.colorPicker.ColorPickerItemFragment;
 import vg11k.com.colorscheme.grid.GridSchemeActivity;
 import vg11k.com.colorscheme.schemeGenerator.SchemeGeneratorActivity;
+import vg11k.com.colorscheme.userEditor.UserEditorActivity;
 
 /**
  * Created by Julien on 01/10/2019.
@@ -23,13 +24,11 @@ public class MenusContainer {
     private static final int NB_FEATURE = 2;
 
     static {
-        //addItem(new MenuGenerique("0", MenuGenerique.GENERIC_TITLE));
-        //addItem(new MenuGenerique("0", ColorPickerItemFragment.FRAGMENT_TITLE));
+
+        addItem(new MenuGenerique("0", UserEditorActivity.ACTIVITY_TITLE));
         addItem(new MenuGenerique("1", ColorConverterToolActivity.ACTIVITY_TITLE));
-        //addItem(new MenuGenerique("2", SchemeGeneratorActivity.ACTIVITY_TITLE));
-        //addItem(new MenuGenerique("3",SchemeGeneratorFragment.FRAGMENT_TITLE));
-        addItem(new MenuGenerique("4", SchemeGeneratorActivity.ACTIVITY_TITLE));
-        addItem(new MenuGenerique("5", GridSchemeActivity.ACTIVITY_TITLE));
+        addItem(new MenuGenerique("2", "Online"));
+        addItem(new MenuGenerique("3", GridSchemeActivity.ACTIVITY_TITLE));
         addItem(new MenuGenerique("x", MenuGenerique.GENERIC_TITLE));
     }
 

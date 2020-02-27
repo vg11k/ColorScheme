@@ -2,38 +2,30 @@ package vg11k.com.colorscheme.schemeGenerator;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcelable;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import vg11k.com.colorscheme.ColorPickerLine;
 import vg11k.com.colorscheme.DataProvider;
 import vg11k.com.colorscheme.MainListActivity;
-import vg11k.com.colorscheme.MainListDetailActivity;
 import vg11k.com.colorscheme.R;
 import vg11k.com.colorscheme.SchemeModel;
 import vg11k.com.colorscheme.StorageKind;
@@ -223,6 +215,10 @@ public class SchemeGeneratorActivity extends AppCompatActivity
                 NavUtils.navigateUpTo(this, new Intent(this, MainListActivity.class));
                 return true;
 
+            case R.id.action_upload_scheme :
+                Snackbar.make(m_generatorFragment.getView(), getResources().getString(R.string.feature_not_developped_yet), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                return true;
             case R.id.action_save_scheme :
 
 
@@ -375,7 +371,9 @@ public class SchemeGeneratorActivity extends AppCompatActivity
                             listWithoutButton.addAll(m_generatorFragment.getValues());
                             listWithoutButton.remove(listWithoutButton.size() - 1);
                             SchemeModel scheme = new SchemeModel(inputText, listWithoutButton);
-                            m_dataProvider.persistSchemeGeneratorData(m_generatorFragment.getContext(), scheme);
+
+                            //always save edited scheme in local.
+                            m_dataProvider.persistSchemeGeneratorData(m_generatorFragment.getContext(), scheme, StorageKind.LOCAL);
                             Snackbar.make(m_generatorFragment.getView(), getResources().getString(R.string.save_done), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }

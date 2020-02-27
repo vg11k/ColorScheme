@@ -17,4 +17,10 @@
         <item>@string/detail</item>
         <item>@string/cancel</item>
     </string-array>
+    <string-array name="selectSchemeManaging">
+        <item>@string/rename_scheme</item>
+        <item>@string/upload_scheme_online</item>
+        <item>@string/delete_scheme</item>
+        <item>@string/cancel</item>
+    </string-array>
 </resources>
